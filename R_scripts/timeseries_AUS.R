@@ -3,9 +3,9 @@ library(dplyr)
 library(readxl)
 library(ggplot2)
 #install.packages("lubridate")
-library(lubridate)
+#library(lubridate)
 #install.packages('forecast')
-library(forecast)
+#library(forecast)
 #install.packages('fmsb')
 library(fmsb)
 
@@ -64,7 +64,8 @@ eg1 <- ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
   theme_minimal()
 
 # Export as png
-ggsave("eg1_timeseries.png", plot = eg1, width = 10, height = 8, dpi = 300)
+png_eg1 <- file.path(paste0(path,"/Output/graphs/", "AUS_eg1_timeseries.png"))
+ggsave(png_eg1, plot = eg1, width = 10, height = 8, dpi = 300)
 
 
 # Plot the Australian hospitalisation data against the Covid data
@@ -101,8 +102,8 @@ min_row <- setNames(rep(0, ncol(wide)), names(wide))
 # Bind the max and min rows to your wide data frame
 wide2 <- rbind(max_row, min_row, wide2)
 
-png_filename <- file.path(paste0(path,"/Output/", "eg2_radar_chart.png"))
-png(png_filename, width = 800, height = 600)
+png_eg2 <- file.path(paste0(path,"/Output/graphs/", "AUS_eg2_radar_chart.png"))
+png(png_eg2, width = 800, height = 600)
 
 eg2 <- radarchart(wide2,
                   cglty = 1,       # Grid line type,
