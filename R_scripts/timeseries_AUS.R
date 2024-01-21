@@ -7,14 +7,24 @@ library(lubridate)
 #install.packages('forecast')
 library(forecast)
 
-setwd("~/OneDrive - London School of Hygiene and Tropical Medicine/2. Term 2/Data challenge/Sanofi/Datasets")
+#setwd("~/OneDrive - London School of Hygiene and Tropical Medicine/2. Term 2/Data challenge/Sanofi/Datasets")
+(path<-getwd())
+
+#####################
+### Manipulate AUS data 
+#####################
 
 # Read in the Australian hospitalisaiton data
-master <- read_excel("Consolidated_dataset_MASTER.xlsx")
+master <- read_excel(paste0(path,"/Dataset/Consolidated_dataset_MASTER.xlsx"),
+                     sheet="Flu")
 aus <- master %>% 
         filter(Country == "Australia") %>% 
         #drop_na(hospitalisation_num) %>% 
         mutate(year_week = as.factor(paste(Year, Week_num, sep = "-")))
+
+#####################
+### Manipulate COVID data 
+#####################
 
 # Read in the Covid data from 'Our World in Data' & filter for hospitalisation data
 covid <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
@@ -37,10 +47,14 @@ covid_new_permil_weekly <- covid_new_permil %>%
   summarise(total_deaths_per_million = sum(total_deaths_per_million), .groups = 'drop') %>%
   mutate(year_week = paste(year, Week_num, sep = "-"))
 
+#####################
+### Plotting tests 
+#####################
+
 # Plot the yearly hospitalisation data on the same week axis
 ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
   geom_line(aes(group = Year, color = as.factor(Year))) +
-  scale_color_manual(values = c("red", "blue", "green", "orange", "purple", "black")) +
+  scale_color_manual(values = c("red", "blue", "green", "orange", "purple")) +
   xlab("Week number") +
   ylab("Number of hospitalisations") +
   theme_minimal()
@@ -57,7 +71,7 @@ ggplot(aus, aes(x=year_week, y=hospitalisation_num)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis text if needed
 
-### Diamond plot
+### Diamond plot (ggseasonplot)
   
 # Plot the hospitalisation on diamond plot
 hos_ts <- ts(aus$hospitalisation_num, start = c(2017, 14), frequency = 30)
@@ -72,10 +86,6 @@ aus_17_19 <- aus %>%
 # Transform the data into a time series
 aus1719_ts <- ts(aus_17_19$hospitalisation_num, start = c(2017, 14), frequency = 30)
 ggplot(aus_17_19)
-
-ts17 <- aus %>% 
-  filter(Year == 2017) %>%
-  ts(aus$hospitalisation_num, start = c(2017, 14), frequency = 28)
 
 # Subset the data to onky incude the yaers 2022-2023
 aus_22_23 <- aus %>% 
