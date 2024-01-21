@@ -101,7 +101,7 @@ min_row <- setNames(rep(0, ncol(wide)), names(wide))
 # Bind the max and min rows to your wide data frame
 wide2 <- rbind(max_row, min_row, wide2)
 
-png_filename <- "eg2_radar_chart.png"
+png_filename <- file.path(paste0(path,"/Output/", "eg2_radar_chart.png"))
 png(png_filename, width = 800, height = 600)
 
 eg2 <- radarchart(wide2,
