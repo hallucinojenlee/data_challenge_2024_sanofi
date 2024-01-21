@@ -6,6 +6,8 @@ library(ggplot2)
 library(lubridate)
 #install.packages('forecast')
 library(forecast)
+#install.packages('fmsb')
+library(fmsb)
 
 #setwd("~/OneDrive - London School of Hygiene and Tropical Medicine/2. Term 2/Data challenge/Sanofi/Datasets")
 (path<-getwd())
@@ -51,13 +53,19 @@ covid_new_permil_weekly <- covid_new_permil %>%
 ### Plotting tests 
 #####################
 
+### Timeseries (ggplot)
+
 # Plot the yearly hospitalisation data on the same week axis
-ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
+eg1 <- ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
   geom_line(aes(group = Year, color = as.factor(Year))) +
   scale_color_manual(values = c("red", "blue", "green", "orange", "purple")) +
   xlab("Week number") +
   ylab("Number of hospitalisations") +
   theme_minimal()
+
+# Export as png
+ggsave("eg1_timeseries.png", plot = eg1, width = 10, height = 8, dpi = 300)
+
 
 # Plot the Australian hospitalisation data against the Covid data
 ggplot(aus, aes(x=year_week, y=hospitalisation_num)) +
@@ -70,6 +78,52 @@ ggplot(aus, aes(x=year_week, y=hospitalisation_num)) +
   ylab("Number of hospitalisations") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis text if needed
+
+  
+### Spider plot (radarchart)
+
+# Create new df so that each row is each year and week num in columns, showing hospitalisation for each week across the years
+wide <- aus %>%
+  select(Year, Week_num, hospitalisation_num) %>%
+  replace(is.na(.), 0) %>%
+  spread(key = Week_num, value = hospitalisation_num) %>%
+  ungroup() %>%
+  as.data.frame()
+
+# Rename each row to the respective years
+wide2 <- wide[,-1]
+rownames(wide2) <- wide[,1]
+
+# Create a max row and a min row
+max_row <- setNames(rep(500, ncol(wide2)), names(wide2))
+min_row <- setNames(rep(0, ncol(wide)), names(wide))
+
+# Bind the max and min rows to your wide data frame
+wide2 <- rbind(max_row, min_row, wide2)
+
+png_filename <- "eg2_radar_chart.png"
+png(png_filename, width = 800, height = 600)
+
+eg2 <- radarchart(wide2,
+                  cglty = 1,       # Grid line type,
+                  pty = 31,        # Plot type (31 = filled)
+                  cglcol = "gray", # Grid line color
+                  vlcex = 0.8,     # Label size
+                  )
+# Add a legend
+legend_labels <- rownames(wide2)[-c(1, 2)]
+legend(x="topright", legend = legend_labels, col = 1:length(legend_labels), lty=1:1, cex = 0.7)
+
+dev.off()
+
+# install.packages("remotes")
+# remotes::install_github("ricardo-bion/ggradar")
+# library(ggradar)
+# 
+# ggradar(wide,
+#         grid.min=0,
+#         grid.max=500
+# )
 
 ### Diamond plot (ggseasonplot)
   
