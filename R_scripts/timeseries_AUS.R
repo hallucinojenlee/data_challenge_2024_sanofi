@@ -102,12 +102,14 @@ min_row <- setNames(rep(0, ncol(wide)), names(wide))
 # Bind the max and min rows to your wide data frame
 wide2 <- rbind(max_row, min_row, wide2)
 
+# Plot and save the radar chart
 png_eg2 <- file.path(paste0(path,"/Output/graphs/", "AUS_eg2_radar_chart.png"))
 png(png_eg2, width = 800, height = 600)
 
 eg2 <- radarchart(wide2,
                   cglty = 1,       # Grid line type,
                   pty = 31,        # Plot type (31 = filled)
+                  plwd = 2,        # Plot line width
                   cglcol = "gray", # Grid line color
                   vlcex = 0.8,     # Label size
                   )
@@ -117,6 +119,7 @@ legend(x="topright", legend = legend_labels, col = 1:length(legend_labels), lty=
 
 dev.off()
 
+# Alternative option: ggradar
 # install.packages("remotes")
 # remotes::install_github("ricardo-bion/ggradar")
 # library(ggradar)
@@ -125,33 +128,3 @@ dev.off()
 #         grid.min=0,
 #         grid.max=500
 # )
-
-### Diamond plot (ggseasonplot)
-  
-# Plot the hospitalisation on diamond plot
-hos_ts <- ts(aus$hospitalisation_num, start = c(2017, 14), frequency = 30)
-week_ts <- ts(aus$Week_num, start = c(2017, 14), frequency = 29)
-ggseasonplot(week_ts, polar=T)
-ggseasonplot(hos_ts, polar=T, continuous = T, ylab = "Hospitalisations", xlab = "Week number")
-
-# Subset the data to only include the years 2017-2019
-aus_17_19 <- aus %>% 
-  filter(Year > 2016 & Year < 2020) %>% 
-  arrange(Year, Week_num)
-# Transform the data into a time series
-aus1719_ts <- ts(aus_17_19$hospitalisation_num, start = c(2017, 14), frequency = 30)
-ggplot(aus_17_19)
-
-# Subset the data to onky incude the yaers 2022-2023
-aus_22_23 <- aus %>% 
-  filter(Year > 2021 & Year < 2024)
-# Transform the data into a time series
-aus2223_ts <- ts(aus_22_23$hospitalisation_num, start = c(2022, 14), end = c(2023, 43))
-
-# Combine the two 2 time series filling 2020-2021 with NAs
-aus_ts <- ts(c(aus1719_ts,rep(NA, 2 * 29),  aus2223_ts), start = c(2017, 14), frequency = 29)
-
-# Plot the time series data
-week <- as.character(14:43)
-ggseasonplot(aus_ts, year.labels = TRUE) +
-  scale_x_continuous(labels = aus$Week_num)
