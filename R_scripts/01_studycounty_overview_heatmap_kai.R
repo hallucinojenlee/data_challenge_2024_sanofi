@@ -2,9 +2,9 @@
 #Date: 2- JAN 2024
 #Author: Kai
 
-#++++++++++++
+#############
 ## set up####
-#++++++++++++
+#############
 #directory
 
 #setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
@@ -13,7 +13,7 @@
 if (!require("readxl")) install.packages("readxl") 
 library(readxl)
 library(ggplot2)
-library("lattice") #heat mapping
+
 
 
 
@@ -23,9 +23,9 @@ df_raw<-read_excel(paste0(path,"/Dataset/Consolidated_dataset_MASTER.xlsx"),
                    col_types = c("text","text","numeric","numeric","numeric","text","text","numeric","numeric","numeric","numeric","numeric"))
                   #ensuring the correct data type of population variable
 
-#++++++++++++++++++++
+#####################
 ## data cleaning ####
-#++++++++++++++++++++
+#####################
 names(df_raw)
 summary(df_raw)
 
@@ -33,15 +33,14 @@ summary(df_raw)
 df_raw$Week_date
 
 
-##pop
+##population
 unique(df_raw[is.na(df_raw$Population),"Country"])
 
-df_raw[df_raw$Country=="Australia","Population"]<-26582504
-df_raw[df_raw$Country=="Brazil","Population"]<-217092900
-df_raw[df_raw$Country=="England","Population"]<-67860917 # UK?
-df_raw[df_raw$Country=="France","Population"]<-64825831
-df_raw[df_raw$Country=="US","Population"]<-341004904
-#next step: should use population from each year
+df_raw[df_raw$Country=="England"&
+         is.na(df_raw$Population),"Population"]<-
+  unique(df_raw[df_raw$Country=="England"&df_raw$Year==2021,"Population"])
+ #using 2021 for 2022, 2023
+
 
 
 ## rate per 100,000 (right?)
@@ -58,10 +57,10 @@ df_raw[is.na(df_raw$hospitalisation_rate),]
 
 df<-df_raw
 
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#######################################################
 ## Heat Map 1: global, not desegregated by country ####
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+#######################################################
+library("lattice") #heat mapping
 library(viridisLite)
 colors <- viridis(100)
 library(RColorBrewer)
@@ -71,7 +70,7 @@ coul <- colorRampPalette(brewer.pal(8, "PiYG"))(25)
 y_scale <- list(at=seq(2017,2024,1))
 x_scale <- list(at=c(1,seq(5,50,5),52))
 
-levelplot(hospitalisation_rate ~ Week_num * Year, 
+heatmap_byyear<-levelplot(hospitalisation_rate ~ Week_num * Year, 
           data=df  ,
           scales=list(x=x_scale, y=y_scale),
           
@@ -82,15 +81,48 @@ levelplot(hospitalisation_rate ~ Week_num * Year,
           col.regions = coul
           )
 #cannot tell difference due to out liears and incomparable across countries
+print(heatmap_byyear)
 
-?levelplot
+ggsave("Output/graphs/01_global_flu_byyear.png",
+       plot = heatmap_byyear)
 
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++
+###################################################
 ## Heat Map 2: global, desegregated by country ####
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++
+###################################################
 
 # create year-country variable
 df$Year_Country<-paste0(df$Year,"-",df$Country)
+
+df$hospitalisation_rate_scaled<-scale(df$hospitalisation_rate)
+df$hospitalisation_rate_log<-log(df$hospitalisation_rate)
+
+
+df_north<-subset(df,Country!="Australia"&Country!="Brazil")
+
+
+
+
+heatmap_bycountryyear_north<-ggplot(data=df_north,
+       aes(x = Week_num,
+           y = Year_Country, 
+           fill = hospitalisation_rate_log)) +
+  geom_raster()          +
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#FF0000FF"),
+                       na.value = "white")  +         
+  scale_x_continuous(breaks=c(1,seq(5,50,5),52))+
+  labs(title="Log influenza hospitalisation rate, North Hemisphere (per 100,000)", 
+       caption="need fixing Australia in South H.",  
+       x="# Weeks",
+       y="Year-Country")+
+  theme_classic()
+
+print(heatmap_bycountryyear)
+
+ggsave("Output/graphs/01_global_flu_north_bycountryyear.png",
+       plot = heatmap_bycountryyear_north,
+       width = 10, height = 8, dpi = 300)
+
+
 
 # levelplot(hospitalisation_rate ~ Week_num * Year_Country, 
 #           data=df  ,
@@ -103,16 +135,3 @@ df$Year_Country<-paste0(df$Year,"-",df$Country)
 #           col.regions = coul
 # )
 #non numeric error
-?scale
-df$hospitalisation_rate_scaled<-scale(df$hospitalisation_rate)
-ggplot(data=df,
-       aes(x = Week_num,
-           y = Year_Country, 
-           fill = hospitalisation_rate_scaled)) +
-  geom_raster()          +
-  scale_fill_gradientn(colours=c("#FFFFFFFF","blue","#FF0000FF"))  +         
-  scale_x_continuous(breaks=c(1,seq(5,50,5),52))+
-  labs(title="global influenza hospitalisation rate", caption="need fixing Australia in South H.",   x="# Weeks", y="Year-Country")
-                       
-#country year
-
