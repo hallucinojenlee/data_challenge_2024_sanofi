@@ -2,9 +2,9 @@ library(tidyverse)
 library(dplyr)
 library(readxl)
 library(ggplot2)
-library(fmsb)
+#library(fmsb)
 
-#setwd("~/OneDrive - London School of Hygiene and Tropical Medicine/2. Term 2/Data challenge/Sanofi/Datasets")
+# Set working directory
 (path<-getwd())
 
 #####################
@@ -48,19 +48,39 @@ covid_new_permil_weekly <- covid_new_permil %>%
 ### Plotting tests 
 #####################
 
+## LSHTM colour palette - HEX:
+# dark green: #004550
+# light green: #2aac6c
+# sky blue: #01abce
+# yellow: #fbb800
+# orange: #e95b0d
+# grey: #b1b2b3
+
 ### Timeseries (ggplot)
 
 # Plot the yearly hospitalisation data on the same week axis
 eg1 <- ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
   geom_line(aes(group = Year, color = as.factor(Year))) +
-  scale_color_manual(values = c("red", "blue", "green", "orange", "purple")) +
+  scale_color_manual(values = c("#f38143", "#f77935", "#b1b2b3", "#18cdf1", "#088199")) +
   xlab("Week number") +
   ylab("Number of hospitalisations") +
-  theme_minimal()
+  ggtitle("Number of Influenza hospitalisations in Australia") +
+  labs(color = "Year") +
+  theme_minimal() + 
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        legend.position=c(0.05,0.85),
+        panel.grid.minor = element_blank(), 
+        text=element_text(size=14,
+                          family="Arial"),
+        axis.line = element_line(colour = "black"))
 
 # Export as png
 png_eg1 <- file.path(paste0(path,"/Output/graphs/", "AUS_eg1_timeseries.png"))
 ggsave(png_eg1, plot = eg1, width = 10, height = 8, dpi = 300)
+
 
 
 # Plot the Australian hospitalisation data against the Covid data
