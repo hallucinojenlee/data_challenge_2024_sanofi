@@ -27,14 +27,29 @@ brazil <- southern %>%
 ### Plotting
 #####################
 # Eg. 1: Timeseries
+colours <- c('Australia' = "#2aac6c", "Brazil" = "#e95b0d")
+
 eg1 <- ggplot() +
-  geom_line(data=aus, aes(x=Date, y=hospitalisation_num), color='skyblue', size=0.7) +
-  geom_line(data=brazil, aes(x=Date, y=hospitalisation_num), color='red', size=0.7) +
-  theme_minimal()
+  geom_line(data=aus, aes(x=Date, y=hospitalisation_num, color='Australia'), size=1.0) +
+  geom_line(data=brazil, aes(x=Date, y=hospitalisation_num, color='Brazil'), size=1.0) +
+  scale_color_manual(values = colours) +
+  labs(
+    x = "Time",
+    y = "Number of hospitalisations",
+    title = "Number of Influenza hospitalisations in Southern hemisphere",
+    color = "Country"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_x_date(date_labels="%yW%W",date_breaks="3 months") +
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+legend.position=c(0.05,0.85),
+axis.text.x=element_text(angle=90,vjust=0.5,hjust=1))
   
 # Export as png
 png_eg1 <- file.path(paste0(path,"/Output/graphs/", "SOUTHERN_eg1_timeseries.png"))
-ggsave(png_eg1, plot = eg1, width = 10, height = 8, dpi = 300)
+ggsave(png_eg1, plot = eg1, width = 14, height = 4, dpi = 300)
 
 # Eg. 2: Plot on the same week axis
 # Plot 1: Aus & Brazil separately
