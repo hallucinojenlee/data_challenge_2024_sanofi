@@ -2,7 +2,7 @@ library(tidyverse)
 library(dplyr)
 library(readxl)
 library(ggplot2)
-#library(fmsb)
+library(fmsb)
 
 # Set working directory
 (path<-getwd())
@@ -60,8 +60,8 @@ covid_new_permil_weekly <- covid_new_permil %>%
 
 # Plot the yearly hospitalisation data on the same week axis
 eg1 <- ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
-  geom_line(aes(group = Year, color = as.factor(Year))) +
-  scale_color_manual(values = c("#f38143", "#f77935", "#b1b2b3", "#18cdf1", "#088199")) +
+  geom_line(aes(group = Year, color = as.factor(Year)), size=0.8) +
+  scale_color_manual(values = c("#f4b18d", "#f77935", "#b1b2b3", "#18cdf1", "#088199")) +
   xlab("Week number") +
   ylab("Number of hospitalisations") +
   ggtitle("Number of Influenza hospitalisations in Australia") +
@@ -119,18 +119,23 @@ wide2 <- rbind(max_row, min_row, wide2)
 
 # Plot and save the radar chart
 png_eg2 <- file.path(paste0(path,"/Output/graphs/", "AUS_eg2_radar_chart.png"))
-png(png_eg2, width = 800, height = 600)
+png(png_eg2, width = 600, height = 600)
+
+colours=c("#f4b18d", "#f77935", "#b1b2b3", "#18cdf1", "#088199")
 
 eg2 <- radarchart(wide2,
+                  pcol=colours,
                   cglty = 1,       # Grid line type,
                   pty = 31,        # Plot type (31 = filled)
-                  plwd = 2,        # Plot line width
+                  plwd = 1.7,        # Plot line width
+                  seg = 2,         # Number of segments
+                  cglwd = 0.1,     # Grid line width
                   cglcol = "gray", # Grid line color
-                  vlcex = 0.8,     # Label size
+                  vlcex = 0.8,     # Label size,
                   )
 # Add a legend
 legend_labels <- rownames(wide2)[-c(1, 2)]
-legend(x="topright", legend = legend_labels, col = 1:length(legend_labels), lty=1:1, cex = 0.7)
+legend(x="topleft", legend = legend_labels, col = colours[1:length(legend_labels)], lty=1:1, cex = 0.7)
 
 dev.off()
 
