@@ -164,11 +164,12 @@ flu_sub<-ggplot(ukflu_sub,aes(x=Season_week,y=hospitalisation_rate,colour=Season
                      labels=xaxis_index$Week_num) +
   scale_y_continuous(name="Hospitalisation rate (per 100k)",expand=c(0,0),
                      limits=c(0,20)) +
-  theme(panel.grid.minor = element_blank(),
+  theme(panel.border = element_blank(), 
+        panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
-        legend.position=c(0.1,0.5),
-        axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
+        legend.position=c(0.05,0.85),
+        text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5))
 
 flu_sub #only showing pre post covid trends
