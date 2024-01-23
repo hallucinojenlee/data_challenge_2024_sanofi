@@ -65,7 +65,7 @@ timeseries_turkiye_flu_nocovid <- ggplot(df,
        x="Week number", 
        y="Number of hospitalisations")+
   theme_minimal()
-
+print(timeseries_turkiye_flu_nocovid)
 
 ggsave("Output/graphs/02_Turkiye_flu_hosp_nocovid.png",
        plot = timeseries_turkiye_flu_nocovid, 
@@ -116,3 +116,29 @@ timeseries_turkiye_flu_covid_rate<-ggplot(
 ggsave("Output/graphs/02_Turkiye_flu_rate_covid.png",
        plot = timeseries_turkiye_flu_covid_rate, 
        width = 10, height = 8, dpi = 300)
+
+
+
+#################################
+## time series against COVID, difference of  ####
+#################################
+
+#calculate baseline
+temp<-df |>
+  filter(Year < 2020)|>
+  group_by(Week_num) |>
+  summarise_at(vars(hospitalisation_rate), list(hospitalisation_rate_mean_prepandemic = mean))
+
+df<-merge(df, temp,
+      all.x=TRUE,
+      by="Week_num")
+df$hospitalisation_rate_difference<- df$hospitalisation_rate - df$hospitalisation_rate_mean_prepandemic
+
+timeseries_flu_rate_difference <- ggplot(df[df$Year >= 2020 ,], 
+  aes(x = Week_num, y = hospitalisation_rate_difference)) +
+  geom_line(aes(group = Year, color = as.factor(Year))) +
+  labs(title="Difference in Influenza Hospitalization Rate, compared to Prepandemic, Türkiye",   
+       x="Week number", 
+       y="Difference in Hospitalisation Rate (per 1,000,000)")+
+  theme_minimal()
+print(timeseries_flu_rate_difference)
