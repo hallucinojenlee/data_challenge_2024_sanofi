@@ -106,7 +106,7 @@ df$Season <-ifelse((df$Year==2023 & df$Week_num > season_week_cut) |
                      (df$Year==2024 & df$Week_num <= season_week_cut)
                    ,"2023/24",df$Season)
 
-df[,c("Year","Season_week","Week_num_season","Week_num","Season")]
+df[,c("Year","Season_week","Week_num","Season")]
 
 df$hemisphere <- "North Hemisphere"
 df[df$Country=="Australia"|df$Country=="Brazil","hemisphere"] <- "South Hemisphere"
@@ -140,14 +140,16 @@ heatmap_bycountryyear_north<-ggplot(
              #,cols = vars(hemisphere) 
   )+
   labs(title="Log Influenza Hospitalisation Rate", 
-       x="ISO Week",
-       y="Influenza Season",
+       x="Calendar week number",
+       y="Influenza season",
        fill="Log Rate",
        )+
   theme_minimal()+
-  theme(panel.border = element_blank(),  
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+        panel.border = element_blank(),  
         panel.grid.major = element_blank(), 
-        legend.position=c(0.1,0.55), 
+        legend.position=c(0.07,0.55), 
         panel.grid.minor = element_blank(),  
         text=element_text(size=17, 
                           family="Arial"), 
@@ -179,16 +181,18 @@ heatmap_bycountryyear_south<-ggplot(
                 #,cols = vars(hemisphere) 
      )+
      labs(title="Log Influenza Hospitalisation Rate", 
-          x="ISO Week",
+          x="Calendar week number",
           y="Year",
           fill="Log Rate",
      )+
      theme_minimal()+
-     theme(panel.border = element_blank(),  
+     theme(strip.text = element_text(
+       size = 22, color = "black"),
+           panel.border = element_blank(),  
            panel.grid.major = element_blank(), 
            legend.position=c(0.1,0.75), 
            panel.grid.minor = element_blank(),  
-           text=element_text(size=17, 
+           text=element_text(size=18, 
                              family="Arial"), 
            axis.line = element_line(colour = "black")) 
 
