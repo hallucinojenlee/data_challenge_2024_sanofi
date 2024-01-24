@@ -108,50 +108,97 @@ df$Season <-ifelse((df$Year==2023 & df$Week_num > season_week_cut) |
 
 df[,c("Year","Season_week","Week_num_season","Week_num","Season")]
 
+df$hemisphere <- "North Hemisphere"
+df[df$Country=="Australia"|df$Country=="Brazil","hemisphere"] <- "South Hemisphere"
 
-df_north<-subset(df,Country!="Australia"&Country!="Brazil")
-df_south<-subset(df,Country!="Australia"&Country!="Brazil")
+tick_week_break <- c(1,seq(5,30,5),33,37,42,47,52)
+label_for_sequence_season_week <- c(21,25,30,35,40,45,50,1,5,10,15,20)
+
+#omit missing, so that no need to assign color for NA
+df<-df[!is.na(df$hospitalisation_rate_log) &
+         !is.infinite(df$hospitalisation_rate_log),]  #log (0) = -Inf, need to exclude them
 
 
+###########
+## NORTH ##
+###########
 
-heatmap_bycountryyear_north<-ggplot(data=df[df$Season!="2016/17",], #df_north
+heatmap_bycountryyear_north<-ggplot(
+      data=df[df$hemisphere=="North Hemisphere" &
+                df$Season!="2016/17"&
+                df$Season!="2020/21",], #df_north
        aes(x = Season_week,  #Week_num_season
            y = Season,   #Year_Country
-           fill = hospitalisation_rate_log)) +
+           fill = hospitalisation_rate_log)) +  #hospitalisation_rate_scaled
   geom_raster()          +
+  scale_x_continuous(breaks=tick_week_break,
+                     labels= label_for_sequence_season_week)+
+  
   scale_fill_gradientn(colours=c("#FFFFFFFF","chartreuse4"),
                        na.value = "white")  +         
-  scale_x_continuous(breaks=c(1,seq(5,50,5),52))+
-  labs(title="Log influenza hospitalisation rate (per 100,000)", 
-       x="# Season Weeks (need to fix to iso week)",
-       y="Year")+
-  theme_classic()+
-  facet_grid(rows = vars(Country))
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere) 
+  )+
+  labs(title="Log Influenza Hospitalisation Rate", 
+       x="ISO Week",
+       y="Influenza Season",
+       fill="Log Rate",
+       )+
+  theme_minimal()+
+  theme(panel.border = element_blank(),  
+        panel.grid.major = element_blank(), 
+        legend.position=c(0.1,0.55), 
+        panel.grid.minor = element_blank(),  
+        text=element_text(size=17, 
+                          family="Arial"), 
+        axis.line = element_line(colour = "black")) 
+  
 print(heatmap_bycountryyear_north)
 
-## south Australia
+ggsave("Output/graphs/01_global_flu_heatmap_north_bycountryyear.png",
+       plot = heatmap_bycountryyear_north,
+       width = 10, height = 8, dpi = 300)
+
+###########
+## SOUTH ##
+###########
+
 heatmap_bycountryyear_south<-ggplot(
-  data=df[df$Country=="Australia" &
-            df$Season!="2016/17",], #df_north
-  aes(x = Season_week,  #Week_num_season
-  y = Season,   #Year_Country
-  fill = hospitalisation_rate_log)) +
+  data=df[df$hemisphere=="South Hemisphere" & 
+            df$Year!= 2017 ,], 
+  aes(x = Week_num,  #Week_num_season
+      y = Year,   #Year_Country
+      fill = hospitalisation_rate_log)) +  #hospitalisation_rate_scaled
   geom_raster()          +
-  scale_fill_gradientn(colours=c("#FFFFFFFF","chartreuse4"),
+  scale_x_continuous(breaks=tick_week_break
+                     #,labels= label_for_sequence_season_week
+                     )+
+   scale_fill_gradientn(colours=c("#FFFFFFFF","chartreuse4"),
                        na.value = "white")  +         
-  scale_x_continuous(breaks=c(1,seq(5,50,5),52))+
-  labs(title="Log influenza hospitalisation rate (per 100,000)", 
-       x="# Season Weeks (need to fix to iso week)",
-       y="Year")+
-  theme_classic()+
-  facet_grid(rows = vars(Country))
+     facet_grid(rows = vars(Country)
+                #,cols = vars(hemisphere) 
+     )+
+     labs(title="Log Influenza Hospitalisation Rate", 
+          x="ISO Week",
+          y="Year",
+          fill="Log Rate",
+     )+
+     theme_minimal()+
+     theme(panel.border = element_blank(),  
+           panel.grid.major = element_blank(), 
+           legend.position=c(0.1,0.75), 
+           panel.grid.minor = element_blank(),  
+           text=element_text(size=17, 
+                             family="Arial"), 
+           axis.line = element_line(colour = "black")) 
 
 print(heatmap_bycountryyear_south)
 
 
-ggsave("Output/graphs/01_global_flu_north_bycountryyear.png",
-       plot = heatmap_bycountryyear_north,
-       width = 10, height = 8, dpi = 300)
+##save
+ggsave("Output/graphs/01_global_flu_heatmap_south_bycountryyear.png",
+       plot = heatmap_bycountryyear_south,
+       width = 10, height = 4.5, dpi = 300)
 
 
 #######################################################
