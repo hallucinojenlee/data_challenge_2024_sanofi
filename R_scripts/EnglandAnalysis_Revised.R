@@ -58,18 +58,6 @@ str(ukflu_c)
 ukflu_sub<-ukflu_s %>%
   filter(as.integer(Season) %in% c(2,3,4,7,8))
 
-#Create df of season + season week for matching with rsv data
-season_week<-ukflu_s %>%
-  select(Year_week,Season,Season_week)
-
-df <-data.frame(Year_week=c("2020_15_1","2020_16_1","2020_17_1",
-                            "2020_18_1","2020_19_1","2020_20_1"),
-                Season=c("2019/20","2019/20","2019/20",
-                         "2019/20","2019/20","2019/20"),
-                Season_week=34:39)
-
-season_week<-rbind(season_week,df)
-
 #Load rsv data
 ukrsv_c<- rsvraw %>%
   filter(Country=="England")%>%
@@ -94,9 +82,9 @@ fluage_20<-fluage_20 %>%
 
 fluage_20<-left_join(x=fluage_20,y=season_week,by="Year_week")
 
-fluage_20_long<-fluage_20 %>%
-  pivot_longer(cols=!c("Year","Week number","Year_week","Date",
-                       "Season","Season_week"),
+fluage_20long<-fluage_20 %>%
+  pivot_longer(cols=!c("Year.x","Week number","Year_week","Date",
+                       "Season","Season_week","Year.y","Week_num"),
                names_to='age_group',
                values_to='hospitalisation_rate') %>%
   mutate(age_group=as.factor(age_group)) %>% drop_na()
@@ -118,7 +106,7 @@ fluage_1820long<-left_join(x=fluage_1820long,y=season_week,by="Year_week")
 str(fluage_1820long)
 
 #Data exploration/summary
-ukflu_sum<-ukflu_s %>%
+ukflu_sum<-ukflu_c %>%
   group_by(Season) %>% 
   summarise(Maximum=max(hospitalisation_rate),
             Max_week=Year_week[which.max(hospitalisation_rate)])
@@ -128,7 +116,7 @@ ukrsv_sum<-ukrsv_c %>%
   summarise(Maximum=max(hospitalisation_rate),
             Max_week=Year_week[which.max(hospitalisation_rate)])
 
-age_sum<-fluage_20_long %>%
+age_sum<-fluage_20long %>%
   group_by(Season,age_group) %>% 
   summarise(Maximum=max(hospitalisation_rate),
             Max_week=Year_week[which.max(hospitalisation_rate)])
@@ -137,6 +125,12 @@ age_1820sum<-fluage_1820long %>%
   group_by(Season,age_group) %>% 
   summarise(Maximum=max(hospitalisation_cases),
             Max_week=Year_week[which.max(hospitalisation_cases)])
+
+write.csv(age_sum,
+          "/Users/giojacob/Desktop/HDS_23_24/Data Challenge/englandagesummary20.png")
+
+write.csv(age_1820sum,
+          "/Users/giojacob/Desktop/HDS_23_24/Data Challenge/englandagesummary1820.png")
 
 #PLOT MAIN FLU GRAPH - England Flu Season By Year comparison
 #Generate column to label x axis with Calendar week

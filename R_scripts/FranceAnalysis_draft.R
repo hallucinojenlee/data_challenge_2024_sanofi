@@ -82,3 +82,32 @@ rsvfr
 
 ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/france_rsv.png",
        plot=rsvfr,width=7,height=4)
+
+#Flu and rsv time series
+fr_comb<-ggplot() +
+  geom_line(data=franceflu_c,aes(x=Date,y=hospitalisation_num),color="skyblue",size=0.7) +
+  geom_line(data=francersv_c,aes(x=Date,y=hospitalisation_num),color="purple",size=0.7) +
+  labs(title="Influenza & RSV hospitalisation trends in France") +
+  scale_y_continuous(name="No of hospitalisation",expand=c(0,0)) +
+  scale_x_date(date_labels="%yW%W",date_breaks="2 months") +
+               #limits=c(as.Date("2017-01-02"),as.Date("2023-12-18"))) +
+  theme(panel.grid.major = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.background = element_rect(fill = "transparent"),
+        axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
+        plot.title=element_text(hjust=0.5))
+
+fr_comb
+ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/frcombined.png",
+       plot=fr_comb,width=11,height=4)
+
+#France summary tables
+franceflu_sum<-franceflu_c %>%
+  group_by(Season) %>% 
+  summarise(Maximum=max(hospitalisation_num,na.rm=TRUE),
+            Max_week=Year_week[which.max(hospitalisation_num)])
+
+francersv_sum<-francersv_c %>%
+  group_by(Season) %>% 
+  summarise(Maximum=max(hospitalisation_num),
+            Max_week=Year_week[which.max(hospitalisation_num)])
