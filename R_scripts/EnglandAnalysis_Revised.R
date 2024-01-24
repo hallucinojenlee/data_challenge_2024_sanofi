@@ -30,12 +30,7 @@ covid<-read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv") %>%
   select(location, date,weekly_hosp_admissions,weekly_hosp_admissions_per_million) %>%
   filter(location=="United Kingdom")
 
-#Filter dataset
-ukflu<-fluraw %>%
-  filter(Country=="England")
-
-ukflu_s<-read.csv("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/Datasets/ukflu_clean.csv")
-
+#Filter dataset for Flu
 ukflu_s<-ukflu_s %>% #Added columns with season + season week
   mutate(Year=factor(Year),
          Season=factor(Season),
@@ -44,7 +39,20 @@ ukflu_s<-ukflu_s %>% #Added columns with season + season week
          Year=factor(Year),
          hospitalisation_rate=as.numeric(hospitalisation_rate))
 
-str(ukflu_s)
+ukflu_c<- fluraw %>%
+  filter(Country=="England")%>%
+  select(Year,Month,Week_num,hospitalisation_rate) %>%
+  mutate(Year_week=paste(Year,Week_num,"1",sep='_'),
+         Date=as.Date(Year_week,'%Y_%W_%u'),
+         Year=factor(Year),
+         hospitalisation_rate=as.numeric(hospitalisation_rate))
+
+ukflu_c<-left_join(x=ukflu_c,y=season_week,by="Year_week") 
+
+ukflu_c<-ukflu_c %>% mutate(Season = factor(ukflu_c$Season),
+                            Year.y = factor(Year.y))
+
+str(ukflu_c)
 
 #Filter out covid years
 ukflu_sub<-ukflu_s %>%
@@ -70,8 +78,13 @@ ukrsv_c<- rsvraw %>%
          Date=as.Date(Year_week,'%Y_%W_%u'),
          Year=factor(Year),
          hospitalisation_rate=as.numeric(hospitalisation_rate))
+         
+ukrsv_c<-left_join(x=ukrsv_c,y=season_week,by="Year_week") 
 
-ukrsv_c<-left_join(x=ukrsv_c,y=season_week,by="Year_week")
+ukrsv_c<-ukrsv_c %>% mutate(Season = factor(ukrsv_c$Season),
+         Year.y = factor(Year.y))
+
+str(ukrsv_c)
 
 #Load and process age data post covid
 fluage_20<-fluage_20 %>%
@@ -134,7 +147,8 @@ xaxis_index<-ukflu_sub %>%
   mutate(Week_num = as.factor(Week_num))
 
 ###MAIN FLU SEASON TREND 
-flu_sub<-ggplot(ukflu_sub,aes(x=Season_week,y=hospitalisation_rate,colour=Season))+
+flu_sub<-ggplot(data=subset(ukflu_c,(as.integer(Season) %in% c(2,3,4,7,8))),
+                aes(x=Season_week,y=hospitalisation_rate,colour=Season))+
   geom_line(size=0.8) + 
   labs(title="Flu hospitalisation rates in England (2017-2023)") + 
   scale_color_manual(values = c("#f4b18d", "#f77935", "#b1b2b3", 
@@ -157,7 +171,7 @@ ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/england_flu.png",
 
 #RSV plots
 ###MAIN RSV PLOT - by season
-rsv_sub<-ggplot(data=subset(ukrsv_c,as.integer(Season) %in% c(2,3,4,7,8)),
+rsv_sub<-ggplot(data=subset(ukrsv_c,as.integer(Season) %in% c(1,2,3,6,7)),
                 aes(x=Season_week,y=hospitalisation_rate,
                               colour=Season))+
   geom_line(size=0.8) + 
