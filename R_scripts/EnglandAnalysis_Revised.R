@@ -253,16 +253,21 @@ fluvar<-ukflu %>%
          hospitalisation_rate=as.numeric(hospitalisation_rate))
 
 fluvar<-left_join(x=fluvar,y=season_week,by="Year_week")
+fluvar<-fluvar %>% mutate(Season=factor(Season))
+
+str(fluvar)
 
 #Flu variant plots
-flu_b<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,7,8)),
+flu_b<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,4,7,8)),
               aes(x=Season_week,color=Season)) +
-  geom_line(aes(y=Flu_B),se=FALSE,size=0.7) +
+  geom_line(aes(y=Flu_B),size=0.7) +
+  scale_color_manual(values = c("#f77935", "#b1b2b3", 
+                                "#18cdf1", "#088199")) +
   labs(title="Influenza B hospitalisation trends (by type) in UK") +
-  scale_colour_brewer(palette="Blues") +
   scale_y_continuous(name="Hospital admissions per week",expand=c(0,0),
                      limits=c(0,25)) +
-  scale_x_continuous(name="Season week",expand=c(0,0),breaks=seq(0,52,by=2)) +
+  scale_x_continuous(name="Season week",expand=c(0,0),breaks=seq(0,51,by=2),
+                     labels=xaxis_index$Week_num) +
   theme(panel.grid.major = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
@@ -270,15 +275,16 @@ flu_b<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,7,8)),
         plot.title=element_text(hjust=0.5),
         legend.position=c(0.15,0.5))
 
-flu_a<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,7,8)),
+flu_a<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,4,7,8)),
               aes(x=Season_week,color=Season)) +
-  geom_line(aes(y=Flu_A),se=FALSE,size=0.8) +
+  geom_line(aes(y=Flu_A),size=0.7) +
+  scale_color_manual(values = c("#f77935", "#b1b2b3", 
+                                "#18cdf1", "#088199")) +
   labs(title="Influenza A hospitalisation trends (by type) in UK") +
-  scale_colour_brewer(palette="BuGn") +
   scale_y_continuous(name="Hospital admissions per week",expand=c(0,0),
                      breaks=seq(0,700,by=100)) +
   scale_x_continuous(name="Season week",expand=c(0,0),
-                     breaks=seq(0,52,by=2)) +
+                     breaks=seq(0,51,by=2),labels=xaxis_index$Week_num) +
   theme(panel.grid.major = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
@@ -286,10 +292,11 @@ flu_a<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,7,8)),
         plot.title=element_text(hjust=0.5),
         legend.position=c(0.15,0.5))
 
-flu_a
+flu_b
 
 var_plot<-grid.arrange(flu_a,flu_b,nrow=2)
-ggsave("Variants.png",var_plot,height=6,width=8,bg='transparent')
+ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/Variants.png",
+       var_plot,height=6,width=8,bg='transparent')
 
 #Plot age differences
 ggplot(data=fluage20_senior,aes(x=Season_week,y=hospitalisation_rate,
