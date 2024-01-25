@@ -228,8 +228,8 @@ combplot<-ggplot() +
 
 #Combined plot - flu and rsv only
 flu_rsv<-ggplot() +
-  geom_line(data=ukflu_s,aes(x=Date,y=hospitalisation_rate),color="skyblue",size=0.7) +
-  geom_line(data=ukrsv_c,aes(x=Date,y=hospitalisation_rate),color="purple",size=0.7) +
+  geom_line(data=ukflu_c,aes(x=Date,y=hospitalisation_rate),color="#088199",size=0.7) +
+  geom_line(data=ukrsv_c,aes(x=Date,y=hospitalisation_rate),color="#f77935",size=0.7) +
   labs(title="Influenza & RSV hospitalisation trends in UK") +
   scale_y_continuous(name="Hospitalisation rate (per 100k)",expand=c(0,0),
                      limits=c(0,10)) +
@@ -242,7 +242,6 @@ flu_rsv<-ggplot() +
         plot.title=element_text(hjust=0.5))
 
 flu_rsv
-ggsave("combinedplot.png",plot=combplot,width=11,height=5)
 ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/flursvplot.png",plot=flu_rsv,width=11,height=4)
 
 #Flu variant exploration

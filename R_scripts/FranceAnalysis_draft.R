@@ -85,8 +85,8 @@ ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/france_rsv.png",
 
 #Flu and rsv time series
 fr_comb<-ggplot() +
-  geom_line(data=franceflu_c,aes(x=Date,y=hospitalisation_num),color="skyblue",size=0.7) +
-  geom_line(data=francersv_c,aes(x=Date,y=hospitalisation_num),color="purple",size=0.7) +
+  geom_line(data=franceflu_c,aes(x=Date,y=hospitalisation_num),color="#088199",size=0.7) +
+  geom_line(data=francersv_c,aes(x=Date,y=hospitalisation_num),color="#f77935",size=0.7) +
   labs(title="Influenza & RSV hospitalisation trends in France") +
   scale_y_continuous(name="No of hospitalisation",expand=c(0,0)) +
   scale_x_date(date_labels="%yW%W",date_breaks="2 months") +
