@@ -15,9 +15,6 @@ library(readxl)
 library(ggplot2)
 
 
-
-
-
 df_raw<-read_excel(paste0(path,"/Dataset/Consolidated_dataset_MASTER.xlsx"),
                    sheet="Flu",
                    col_types = c("text","text","numeric","numeric","numeric","text","text","numeric","numeric","numeric","numeric","numeric"))
@@ -134,7 +131,7 @@ heatmap_bycountryyear_north<-ggplot(
   scale_x_continuous(breaks=tick_week_break,
                      labels= label_for_sequence_season_week)+
   
-  scale_fill_gradientn(colours=c("#FFFFFFFF","chartreuse4"),
+  scale_fill_gradientn(colours=c("blue","#FFFFFFFF","chartreuse4"),
                        na.value = "white")  +         
   facet_grid(rows = vars(Country)
              #,cols = vars(hemisphere) 

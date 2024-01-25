@@ -9,6 +9,10 @@ library(readxl)
 library(scales)
 library(gridExtra)
 
+setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
+(path<-getwd())
+
+
 ##########
 #loading##
 ##########
@@ -120,3 +124,44 @@ ggsave("Output/graphs/02_Turkiye_flu_rsv_7yeartrend.png",
        width = 11, height = 5, dpi = 300)
 
 
+#######################
+##plot flu overlap ####
+#######################
+
+
+
+x_axis_index<-df_rsv %>%
+  select(Week_num) %>%
+  slice(1:52) %>%
+  slice(which(row_number() %% 2==1)) %>%
+  mutate(Week_num = as.factor(Week_num))
+
+
+
+tt<-subset(df_rsv,(as.integer(Season) %in% c(2,3,4,7,8)))
+
+
+
+plot_flu<-ggplot(data=  subset(df_flu,
+                               df_flu$Season!="2020/2021"&df_flu$Season!="2021/2022") ,
+                aes(x=Season_week,
+                    y=hospitalisation_rate,
+                    colour=Season))+
+  geom_line(size=0.8)
++ 
+  labs(title="Flu hospitalisation rates in England (2017-2023)") + 
+  scale_color_manual(values = c("#f4b18d", "#f77935", "#b1b2b3", 
+                                "#18cdf1", "#088199")) +
+  scale_x_continuous(name="Calendar week number",expand=c(0,0),breaks=seq(1,52,by=2),
+                     labels=xaxis_index$Week_num) +
+  scale_y_continuous(name="Hospitalisation rate (per 100k)",expand=c(0,0),
+                     limits=c(0,20)) 
+
++
+  theme(panel.border = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.background = element_rect(fill = "transparent"),
+        legend.position=c(0.1,0.7),
+        text=element_text(size=14,family="Arial"),
+        plot.title=element_text(hjust=0.5))
