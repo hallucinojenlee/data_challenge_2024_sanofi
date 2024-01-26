@@ -187,21 +187,6 @@ rsv_sub #only showing pre post covid trends
 ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/england_rsv.png",
        plot=rsv_sub,width=7,height=4)
 
-#Smoothed out curve
-rsv_sub2<-ggplot(ukrsv_sub,aes(x=Season_week,y=hospitalisation_rate,colour=Season))+
-  geom_smooth(se=FALSE,size=0.7) + 
-  labs(title="RSV hospitalisation rates in England (2017-2023)") + 
-  scale_color_manual(values = colorRampPalette(brewer.pal(9, "Purples"))(9)[4:9]) +
-  scale_x_continuous(name="Week number",expand=c(0,0)) +
-  scale_y_continuous(name="Hospitalisation rate (per 100k)",expand=c(0,0),limits=c(0,3)) +
-  theme(panel.grid.major = element_blank(),
-        axis.line = element_line(colour = "black"),
-        panel.background = element_rect(fill = "white"),
-        plot.title=element_text(hjust=0.5))
-
-rsv_sub2 #Smoothed lines, looks cleaner
-ggsave("rsvseason_subsmooth.png",plot=rsv_sub2,width=6,height=3.5)
-
 #COVID DATA EXPLORATION
 covid_c <- na.omit(covid) %>%
   mutate(date=as.Date(date))
@@ -232,7 +217,7 @@ flu_rsv<-ggplot() +
   geom_line(data=ukrsv_c,aes(x=Date,y=hospitalisation_rate),color="#f77935",size=0.7) +
   labs(title="Influenza & RSV hospitalisation trends in UK") +
   scale_y_continuous(name="Hospitalisation rate (per 100k)",expand=c(0,0),
-                     limits=c(0,10)) +
+                     limits=c(0,20)) +
   scale_x_date(date_labels="%yW%W",date_breaks="2 months",
                limits=c(as.Date("2017-01-02"),as.Date("2023-12-18"))) +
   theme(panel.grid.major = element_blank(),
@@ -254,6 +239,8 @@ fluvar<-ukflu %>%
 
 fluvar<-left_join(x=fluvar,y=season_week,by="Year_week")
 fluvar<-fluvar %>% mutate(Season=factor(Season))
+
+fluvar$prop_fluA <- fluvar$Flu_A/(fluvar$Flu_A+fluvar$Flu_B)
 
 str(fluvar)
 
