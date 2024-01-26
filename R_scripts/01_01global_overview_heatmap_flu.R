@@ -7,7 +7,7 @@
 #++++++++++++
 #directory
 
-#setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
+setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
 (path<-getwd())
 
 if (!require("readxl")) install.packages("readxl") 
@@ -199,7 +199,12 @@ ggsave("Output/graphs/01_01_global overview/01_globaloverview_heatmap_flu_south.
        plot = heatmap_bycountryyear_south_flu,
        width = 10, height = 4.5, dpi = 300)
 
-# 
+###save df
+
+write.csv(df, paste0(path,"/Dataset/dataframe_master_cleaned_flu.csv"))
+
+
+### 
 # #++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ## Heat Map 2: global, not desegregated by country ####
 # #++++++++++++++++++++++++++++++++++++++++++++++++++++++

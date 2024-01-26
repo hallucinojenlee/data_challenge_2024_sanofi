@@ -7,7 +7,7 @@
 #++++++++++++
 #directory
 
-#setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
+setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
 (path<-getwd())
 
 if (!require("readxl")) install.packages("readxl") 
@@ -138,7 +138,13 @@ ggsave("Output/graphs/01_01_global overview/02_globaloverview_heatmap_rsv.png",
        width = 14, height = 8, dpi = 300)
 
 
-temp<-unique(df_north[,c("Month","Week_num")])
+#temp<-unique(df_north[,c("Month","Week_num")])
+
+##save
+
+
+write.csv(df, paste0(path,"/Dataset/dataframe_master_cleaned_rsv.csv"))
+
 
 #++++++++++++++++++++++
 #  Plot south ####
