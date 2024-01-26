@@ -55,7 +55,7 @@ df_raw[is.na(df_raw$hospitalisation_rate),]
 df<-df_raw
 
 ###################################################
-## Heat Map 2: global, desegregated by country ####
+## Heat Map 1: global, desegregated by country ####
 ###################################################
 df<-df[order(df$Country,df$Year,decreasing = TRUE),]
 # create year-country variable
@@ -203,7 +203,7 @@ ggsave("Output/graphs/01_global_flu_heatmap_south_bycountryyear.png",
 
 
 #######################################################
-## Heat Map 1: global, not desegregated by country ####
+## Heat Map 2: global, not desegregated by country ####
 #######################################################
 library("lattice") #heat mapping
 library(viridisLite)
@@ -232,14 +232,33 @@ ggsave("Output/graphs/01_global_flu_byyear.png",
        plot = heatmap_byyear)
 
 
-# levelplot(hospitalisation_rate ~ Week_num * Year_Country, 
-#           data=df  ,
-#           scales=list(x=x_scale, y=y_scale),
-#           
-#           
-#           xlab="# Week",
-#           ylab="Year",
-#           main="Influenza Hospitalization Rate (per 100,0000), Study Countries",
-#           col.regions = coul
-# )
-#non numeric error
+
+##########
+#WO test
+#############
+
+install.packages("seastests")
+library(seastests)
+test<-df[df$Country=="US",]
+
+test2<-rbind(
+test[test$Year==2022,"hospitalisation_rate"][1:30,],
+test[test$Year==2023,"hospitalisation_rate"][1:30,])
+
+test3<-ts(test2, frequency = 30)
+
+
+xx<-seastests::combined_test(test3)
+
+x <- ts(rnorm(80), frequency=4)
+x<-seastests::combined_test(x)
+plot(decompose(x))
+
+library(tidyverse)
+
+test<-df |>
+  group_by(Season)|>
+  mutate(peak_week = which(hospitalisation_rate== max(hospitalisation_rate)))
+test[=="peak_week",]
+
+
