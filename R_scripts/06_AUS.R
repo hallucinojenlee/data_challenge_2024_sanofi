@@ -2,7 +2,7 @@ library(tidyverse)
 library(dplyr)
 library(readxl)
 library(ggplot2)
-library(fmsb)
+#library(fmsb)
 
 # Set working directory
 (path<-getwd())
@@ -20,7 +20,7 @@ aus <- master %>%
         mutate(year_week = as.factor(paste(Year, Week_num, sep = "-")))
 
 #####################
-### Manipulate COVID data 
+### Manipulate COVID data (not used in the end)
 #####################
 
 # Read in the Covid data from 'Our World in Data' & filter for hospitalisation data
@@ -45,7 +45,7 @@ covid_new_permil_weekly <- covid_new_permil %>%
   mutate(year_week = paste(year, Week_num, sep = "-"))
 
 #####################
-### Plotting tests 
+### Plotting graphs 
 #####################
 
 ## LSHTM colour palette - HEX:
@@ -71,19 +71,21 @@ eg1 <- ggplot(aus, aes(x = Week_num, y = hospitalisation_num)) +
   scale_y_continuous(expand=c(0,0)) +
   theme(panel.border = element_blank(), 
         panel.grid.major = element_blank(),
-        legend.position=c(0.05,0.85),
+        legend.title = element_text(size=20), 
+        legend.text = element_text(size=20),
+        legend.position=c(0.1,0.85),
         panel.grid.minor = element_blank(), 
-        text=element_text(size=14,
+        text = element_text(size=20,
                           family="Arial"),
         axis.line = element_line(colour = "black"))
 
 # Export as png
-png_eg1 <- file.path(paste0(path,"/Output/graphs/", "AUS_eg1_timeseries.png"))
+png_eg1 <- file.path(paste0(path,"/Output/graphs/06_Australia/", "AUS_eg1_timeseries.png"))
 ggsave(png_eg1, plot = eg1, width = 10, height = 8, dpi = 300)
 
 
 
-# Plot the Australian hospitalisation data against the Covid data
+# Plot the Australian hospitalisation data against the Covid data (not used in the end)
 ggplot(aus, aes(x=year_week, y=hospitalisation_num)) +
   geom_line(aes(group=1), color='red') +
   geom_line(data = covid_new_permil_weekly, aes(x = year_week, y = total_deaths_per_million, group=1), color='blue') +
@@ -96,7 +98,7 @@ ggplot(aus, aes(x=year_week, y=hospitalisation_num)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  # Rotate x-axis text if needed
 
   
-### Spider plot (radarchart)
+### Spider plot (radarchart) (not used in the end)
 
 # Create new df so that each row is each year and week num in columns, showing hospitalisation for each week across the years
 wide <- aus %>%
@@ -138,13 +140,3 @@ legend_labels <- rownames(wide2)[-c(1, 2)]
 legend(x="topleft", legend = legend_labels, col = colours[1:length(legend_labels)], lty=1:1, cex = 0.7)
 
 dev.off()
-
-# Alternative option: ggradar
-# install.packages("remotes")
-# remotes::install_github("ricardo-bion/ggradar")
-# library(ggradar)
-# 
-# ggradar(wide,
-#         grid.min=0,
-#         grid.max=500
-# )
