@@ -119,6 +119,9 @@ write.csv(table_peak_week_mean_median_byeracountrydisease,
 
 df_post<-df_peak[df_peak$era=="Post-pandemic",]
 
+df_post$Country<-factor(df_post$Country, 
+                        levels = c("England", "France", "Türkiye","US","Australia","Brazil"))
+
 #long to wide
 df_post_wide_meandiff<-   pivot_wider(df_post, 
                          id_cols=c(Country,
@@ -145,26 +148,39 @@ p1_diff_mean_omitna<-ggplot(
        data=df_post_wide_meandiff_nona, 
        mapping=aes(x=Influenza, 
                    y=RSV, 
-                   col=factor(Country)
+                   col=Country
                    ))+ 
-  geom_point(size=4)+
+  geom_point(size=6.5)+
   geom_hline(yintercept=0, linetype="dashed", 
              color = "black")+
   geom_vline(xintercept=0, linetype="dashed", 
              color = "black")+
+  scale_x_continuous(breaks= c(-15,-10,-5,0,5,10))+
+  scale_y_continuous(breaks= c(-20,-15,-10,-5,0,5,10,15,20,25))+
+  scale_color_manual(values=c("#E69F00", "#56B4E9","deeppink","darkgreen","#999999","purple1"))+
   
-    geom_hline(yintercept=0, linetype="dashed", 
-             color = "black")+
-  labs(title="Difference in peak weeks, compared to the pre-pandemic's average", caption="7 data points are removed due to incompleteness of diseases data", 
-       x="Difference in Influenza peak weeks",
-       y="Difference in RSV peak weeks")
-
+  labs(title="Variation in peak weeks compared to pre-pandemic average peak", 
+       caption="7 data points are removed due to incomplete reporting of mutual diseases.", 
+       #subtitle ="Pre-pandemic baseline is the avrage of the peak weeks before the countries peak weeks of the disease" ,
+       x="Difference in Influenza peak (week)",
+       y="Difference in RSV peak (week)")+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 15, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.91,0.82), 
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=19, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")
+    ) 
 
 print(p1_diff_mean_omitna)
 
 ggsave("Output/graphs/01_01_global overview/03_scatterplot_diff_mean.png",
        plot = p1_diff_mean_omitna,
-       width = 6, height = 4, dpi = 300)
+       width = 10, height = 8, dpi = 300)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## 1-2. plot difference by two disease facet with all data points ####
@@ -173,18 +189,32 @@ ggsave("Output/graphs/01_01_global overview/03_scatterplot_diff_mean.png",
 p2_diff_mean_desease_facet<-     ggplot(data=df_post, 
        mapping=aes(x=Season, 
                    y=week_diff_mean, 
-                   col=factor(Country)
+                   col=Country
        ))+   
-     geom_point(size=4)+
+     geom_point(size=6.5)+
      facet_wrap(vars(Disease))+
      geom_hline(yintercept=0, linetype="dashed", 
                color = "black")+
-  labs(title="Difference in peak weeks, compared to the pre-pandemic's average",
-       caption="", 
-       y="Difference in peak weeks",
-       x="Season")
+    scale_y_continuous(breaks= c(-20,-15,-10,-5,0,5,10,15,20,25))+
+  scale_color_manual(values=c("#E69F00", "#56B4E9","deeppink","darkgreen","#999999","purple1"))+
+  
+  labs(title="Variation in peak weeks compared to pre-pandemic average peak", 
+       x="Season",
+       y="Difference in peak (week)")+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 23, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.93,0.9), 
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=19, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")
+  ) 
 print(p2_diff_mean_desease_facet)
+
 
 ggsave("Output/graphs/01_01_global overview/03_scatterplot_diff_mean_facet.png",
        plot = p2_diff_mean_desease_facet,
-       width = 6, height = 4, dpi = 300)
+       width = 10, height = 8, dpi = 300)
