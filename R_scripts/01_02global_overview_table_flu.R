@@ -156,13 +156,13 @@ x <- formattable(final_table, align =c("c","r","r","r","c", "r", 'r', 'r', 'c'),
   `Flu After`= color_tile(customGreen0, customGreen),
   `Flu Diff`= improvement_formatter,
   `P` = formatter("span", 
-                  ~ icontext(ifelse(`P` == '<0.05*', "ok", "remove"), ifelse(`P` == '<0.05*', "<0.05*", `P`)), 
+                  ~ icontext(ifelse(`P` == '<0.05*', "ok", " "), ifelse(`P` == '<0.05*', "<0.05*", `P`)), 
                   style =  ~ style(color = ifelse(`P` == '<0.05*', "green", "gray"))),
   `RSV Before`= color_tile(customGreen0, customGreen),
   `RSV After`= color_tile(customGreen0, customGreen),
   `RSV Diff`= improvement_formatter,
   `P ` = formatter("span", 
-                  ~ icontext(ifelse(`P ` == '<0.05*', "ok", "remove"), ifelse(`P ` == '<0.05*', "<0.05*", `P `)), 
+                  ~ icontext(ifelse(`P ` == '<0.05*', "ok", " "), ifelse(`P ` == '<0.05*', "<0.05*", `P `)), 
                   style =  ~ style(color = ifelse(`P ` == '<0.05*', "green", "gray")))
   )) 
 
