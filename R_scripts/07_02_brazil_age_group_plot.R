@@ -36,11 +36,11 @@ ggplot(total_age, aes(x = as.factor(week_num), y = n, group = interaction(kat_ye
                                                                                                   panel.grid.minor = element_blank(),
                                                                                                   axis.line = element_line(colour = "black"),
                                                                                                   panel.background = element_rect(fill = "transparent"),
-                                                                                                  legend.position='bottom',
+                                                                                                  legend.position='right',
                                                                                                   strip.text = element_text(size = 12),
                                                                                                   text=element_text(size=14,family="Arial"),
                                                                                                   strip.background = element_blank(),
-                                                                                                  plot.title=element_text(hjust=0.5)) + guides(color = guide_legend(title = "Season")) 
+                                                                                                  plot.title=element_text(hjust=0.5)) + guides(color = guide_legend(title = "Year")) 
 
 
 # influenza
@@ -79,8 +79,10 @@ ggplot(total_age, aes(x = as.factor(week_num), y = n, group = interaction(kat_ye
                                                                                                   panel.grid.minor = element_blank(),
                                                                                                   axis.line = element_line(colour = "black"),
                                                                                                   panel.background = element_rect(fill = "transparent"),
-                                                                                                  legend.position='bottom',
+                                                                                                  legend.position='right',
                                                                                                   strip.text = element_text(size = 12),
                                                                                                   text=element_text(size=14,family="Arial"),
                                                                                                   strip.background = element_blank(),
-                                                                                                  plot.title=element_text(hjust=0.5)) + guides(color = guide_legend(title = "Season")) 
+                                                                                                  plot.title=element_text(hjust=0.5)) + guides(color = guide_legend(title = "Year")) 
+
+
