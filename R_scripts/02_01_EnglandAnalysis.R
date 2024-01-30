@@ -304,7 +304,7 @@ agepre<-ggplot(subset(fluage_1820long,as.integer(Season) %in% c(1,2,3)), #select
   #group by flu season
   geom_line(aes(color=Season), size=.8) +
   #put individual graphs by age group into one visualisation
-  facet_wrap(~ age_group,scales='free_y') +
+  facet_wrap(~ age_group) +
   #set colors for flu season
   scale_color_manual(values = c("#f4b18d", "#f77935","#b1b2b3")) + 
   #set labels
