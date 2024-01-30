@@ -37,8 +37,6 @@ franceflu_c<-left_join(x=franceflu,y=season_week,by="Year_week") %>%
   mutate(Season=factor(Season),
          Year.y=factor(Year.y))
 
-str(franceflu_c)
-
 #Merge rsv data
 francersv<- rsvraw %>%
   filter(Country=="France")%>%
@@ -52,15 +50,16 @@ francersv_c<-left_join(x=francersv,y=season_week,by="Year_week") %>%
   mutate(Season=factor(Season),
          Year.y=factor(Year.y))
 
-str(francersv_c)
-
 #Generate column for correct week number label 
 xaxis_index<-ukflu_sub %>%
-  select(Week_num) %>%
+  select(Week_num.x) %>%
   slice(1:52) %>%
-  mutate(WeekNum = as.factor(Week_num))
+  slice(which(row_number() %% 2==1)) %>%
+  mutate(WeekNum.x = as.factor(Week_num.x))
 
-#Flu Season trends
+##################################################
+#France Flu hospitalisation trend by season
+##################################################
 flufr<-ggplot(data=subset(franceflu_c,as.integer(Season) %in% c(1,2,5,6)),
                                aes(x=Season_week,y=hospitalisation_num,
                                    colour=Season))+
@@ -68,8 +67,8 @@ flufr<-ggplot(data=subset(franceflu_c,as.integer(Season) %in% c(1,2,5,6)),
   labs(title="Flu hospitalisation in France (2017-2023)") + 
   scale_color_manual(values = c("#f77935", "#b1b2b3", 
                                 "#18cdf1", "#088199")) +
-  scale_x_continuous(name="Calendar week number",expand=c(0,0),breaks=seq(1,52,by=2),
-                     labels=xaxis_index$Week_num) +
+  scale_x_continuous(name="Calendar week number",expand=c(0,0),breaks=seq(0,51,by=2),
+                     labels=xaxis_index$Week_num.x) +
   scale_y_continuous(name="No of hospitalisation",expand=c(0,0)) +
   theme(panel.border = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -79,10 +78,12 @@ flufr<-ggplot(data=subset(franceflu_c,as.integer(Season) %in% c(1,2,5,6)),
         text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5))
 
-ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/france_flu.png",
+ggsave(paste0(path,"/Output/graphs/03_France/france_flu.png"),
        plot=flufr,width=7,height=4)
 
-#RSV season trends
+##################################################
+#France RSV trends by season
+##################################################
 rsvfr<-ggplot(data=subset(francersv_c,as.integer(Season) %in% c(1,2,5)),
               aes(x=Season_week,y=hospitalisation_num,
                   colour=Season))+
@@ -91,7 +92,7 @@ rsvfr<-ggplot(data=subset(francersv_c,as.integer(Season) %in% c(1,2,5)),
   scale_color_manual(values = c("#f77935", "#b1b2b3", 
                                 "#18cdf1", "#088199")) +
   scale_x_continuous(name="Calendar week number",expand=c(0,0),breaks=seq(1,52,by=2),
-                     labels=xaxis_index$Week_num) +
+                     labels=xaxis_index$Week_num.x) +
   scale_y_continuous(name="No of hospitalisation",expand=c(0,0)) +
   theme(panel.border = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -101,12 +102,12 @@ rsvfr<-ggplot(data=subset(francersv_c,as.integer(Season) %in% c(1,2,5)),
         text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5))
 
-rsvfr
-
-ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/france_rsv.png",
+ggsave(paste0(path,"/Output/graphs/03_France/france_rsv.png"),
        plot=rsvfr,width=7,height=4)
 
-#Flu and rsv time series
+##################################################
+#Flu and RSV time series
+##################################################
 fr_comb<-ggplot() +
   geom_line(data=franceflu_c,aes(x=Date,y=hospitalisation_num),color="#088199",size=0.7) +
   geom_line(data=francersv_c,aes(x=Date,y=hospitalisation_num),color="#f77935",size=0.7) +
@@ -121,10 +122,12 @@ fr_comb<-ggplot() +
         plot.title=element_text(hjust=0.5))
 
 fr_comb
-ggsave("/Users/giojacob/Desktop/HDS_23_24/Data Challenge/frcombined.png",
+ggsave(paste0(path,"Output/graphs/03_France/frcombined.png"),
        plot=fr_comb,width=11,height=4)
 
-#France summary tables
+##################################################
+#France summary tables of peak week by seasons
+##################################################
 franceflu_sum<-franceflu_c %>%
   group_by(Season) %>% 
   summarise(Maximum=max(hospitalisation_num,na.rm=TRUE),
