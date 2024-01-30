@@ -93,7 +93,9 @@ fluage_20long<-fluage_20 %>%
                        "Season","Season_week","Year.y","Week_num"),
                names_to='age_group',
                values_to='hospitalisation_rate') %>%
-  mutate(age_group=as.factor(age_group),
+  mutate(age_group=factor(age_group,levels=c("0-4Y","5-14Y",
+                                             "15-44Y","45-54Y","55-64Y","65-74Y",
+                                             "75-84Y","85Y+")),
          Season=factor(Season)) %>% drop_na()
 
 ###################################################################
@@ -107,12 +109,12 @@ fluage_1820long<-fluage_18_20 %>%
   mutate(Year_week=paste(Year,Week,"1",sep='_'),
          Date=as.Date(Year_week,'%Y_%W_%u'),
          Year=factor(Year),
-         age_group=factor(age_group))
+         age_group=factor(age_group,levels=c("<1Y","1-4Y","5-14Y",
+                                             "15-44Y","45-64Y","65Y+")))
 
 fluage_1820long<-left_join(x=fluage_1820long,y=season_week,by="Year_week")
 fluage_1820long<-fluage_1820long %>%
   mutate(Season=factor(Season))
-
 ##############################################################
 #Summary tables - peak hosp week by flu & RSV season
 ##############################################################
@@ -288,8 +290,6 @@ flu_a<-ggplot(data=subset(fluvar,as.integer(Season) %in% c(3,4,7,8)),
         axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
         plot.title=element_text(hjust=0.5),
         legend.position=c(0.15,0.5))
-
-flu_b
 
 var_plot<-grid.arrange(flu_a,flu_b,nrow=2)
 ggsave(paste0(path,"/Output/graphs/02_England/Variants.png"),

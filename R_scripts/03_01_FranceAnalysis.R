@@ -1,9 +1,32 @@
-#Mapping for season week
-season_week<-read.csv("~/Library/CloudStorage/OneDrive-LondonSchoolofHygieneandTropicalMedicine/Sanofi/Datasets/seasonweek.csv")
+#####DATA CLEANING AND ANALYSIS FRANCE#####
+#Updated 30 Jan 2024
+#Author: Gio
 
-#Merge with season year and season week for France data
+library(RColorBrewer)
+library(tidyverse)
+library(ggthemes)
+library(readxl)
+library(scales)
+library(gridExtra)
+
+path<-getwd()
+
+########################
+#Load data for analysis
+########################
+fluraw <- read_excel(paste0(path,"/Dataset/Consolidated_dataset_MASTER.xlsx"), 
+                     sheet = "Flu")
+
+season_week<-read.csv(paste0(path,"/Dataset/seasonweek.csv"))
+                      
+#########################
+#Data processing
+#########################
+
+#Merge with season year & season week for plotting of graphs
 franceflu<- fluraw %>%
   filter(Country=="France")%>%
+  #Create data from year and week number
   select(Year,Month,Week_num,hospitalisation_num) %>%
   mutate(Year_week=paste(Year,Week_num,"1",sep='_'),
          Date=as.Date(Year_week,'%Y_%W_%u'),
