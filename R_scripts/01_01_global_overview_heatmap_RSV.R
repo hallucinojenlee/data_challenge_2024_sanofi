@@ -164,7 +164,7 @@ heatmap_bycountryyear_south_rsv<-ggplot(
   scale_x_continuous(breaks=tick_week_break_south
                      #,labels= label_for_sequence_season_week
   )+
-  scale_fill_gradientn(colours=c("#FFFFFFFF","#004550"),
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#f77935"),
                        na.value = "white")  +
   facet_grid(rows = vars(Country)
              #,cols = vars(hemisphere)
@@ -206,7 +206,7 @@ heatmap_bycountryyear_rsv_north<-ggplot(
   scale_x_continuous(breaks=tick_week_break,
                      labels= label_for_sequence_season_week)+
   
-  scale_fill_gradientn(colours=c("#FFFFFFFF","#004550"),
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#f77935"),
                        na.value = "white")  +         
   facet_grid(rows = vars(Country)
              #,cols = vars(hemisphere) 
