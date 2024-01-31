@@ -7,7 +7,7 @@
 #++++++++++++
 #directory
 
-setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
+#setwd("C:/Users/three/Neu Kasten_5440/022 master degree LSHTM/LSHTM/013 Data Challenge/My Sanofi_5440/data_challenge_2024_sanofi")
 (path<-getwd())
 
 if (!require("readxl")) install.packages("readxl") 
@@ -110,7 +110,7 @@ heatmap_bycountryyear_rsv<-ggplot(
   scale_x_continuous(breaks=tick_week_break,
                      labels= label_for_sequence_season_week)+
   
-  scale_fill_gradientn(colours=c("#FFFFFFFF","#f77935"),
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#004550"),
                        na.value = "white")  +         
   facet_grid(rows = vars(Country)
              #,cols = vars(hemisphere) 
@@ -141,50 +141,96 @@ ggsave("Output/graphs/01_01_global overview/02_globaloverview_heatmap_rsv.png",
 #temp<-unique(df_north[,c("Month","Week_num")])
 
 ##save
-
-
 write.csv(df, paste0(path,"/Dataset/dataframe_master_cleaned_rsv.csv"))
 
 
 #++++++++++++++++++++++
 #  Plot south ####
 #++++++++++++++++++++++
-# 
-# df_south<- df[df$hemisphere=="South Hemisphere" &df$Year!= 2017,]
-# 
-# year_lable_south <-c(2018:2023)
-# tick_week_break_south <- c(1,seq(5,50,5),52)
-# 
-# 
-# heatmap_bycountryyear_south_rsv<-ggplot(
-#   data=  df_south , 
-#   aes(x = Week_num,  #Week_num_season
-#       y = Year,   #Year_Country
-#       fill = hospitalisation_rate_log)) +  #hospitalisation_rate_scaled
-#   geom_raster()          +
-#   scale_y_continuous(breaks = year_lable_south)+
-#   scale_x_continuous(breaks=tick_week_break_south
-#                      #,labels= label_for_sequence_season_week
-#   )+
-#   scale_fill_gradientn(colours=c("#FFFFFFFF","#f77935"),
-#                        na.value = "white")  +         
-#   facet_grid(rows = vars(Country)
-#              #,cols = vars(hemisphere) 
-#   )+
-#   labs(title="Log Influenza Hospitalisation Rate", 
-#        x="",#Calendar week number
-#        y="Year",
-#        fill="Log Rate",
-#   )+
-#   theme_minimal()+
-#   theme(strip.text = element_text(
-#     size = 22, color = "black"),
-#     panel.border = element_blank(),  
-#     panel.grid.major = element_blank(), 
-#     legend.position=c(0.1,0.75), 
-#     panel.grid.minor = element_blank(),  
-#     text=element_text(size=18, 
-#                       family="Arial"), 
-#     axis.line = element_line(colour = "black")) 
-# 
-# print(heatmap_bycountryyear_south_rsv)
+
+df_south<- df[df$hemisphere=="South Hemisphere" &df$Year!= 2017,]
+
+year_lable_south <-c(2018:2023)
+tick_week_break_south <- c(1,seq(5,50,5),52)
+
+
+heatmap_bycountryyear_south_rsv<-ggplot(
+  data=  df_south ,
+  aes(x = Week_num,  #Week_num_season
+      y = Year,   #Year_Country
+      fill = hospitalisation_rate_log)) +  #hospitalisation_rate_scaled
+  geom_raster()          +
+  scale_y_continuous(breaks = year_lable_south)+
+  scale_x_continuous(breaks=tick_week_break_south
+                     #,labels= label_for_sequence_season_week
+  )+
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#004550"),
+                       na.value = "white")  +
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere)
+  )+
+  labs(title="Log RSV Hospitalisation Rate",
+       x="",#Calendar week number
+       y="Year",
+       fill="Log Rate",
+  )+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    legend.position= "none", #c(0.1,0.75)
+    panel.grid.minor = element_blank(),
+    text=element_text(size=23,
+                      family="Arial"),
+    axis.line = element_line(colour = "black"))
+
+print(heatmap_bycountryyear_south_rsv)
+
+ggsave("Output/graphs/01_01_global overview/02_globaloverview_heatmap_rsv_south.png",
+       plot = heatmap_bycountryyear_south_rsv,
+       width = 10, height = 2.3, dpi = 300)
+
+#++++++++++++++++
+## plot north####
+#++++++++++++++++
+
+df_north<-df[df$hemisphere=="North Hemisphere",]
+
+heatmap_bycountryyear_rsv_north<-ggplot(
+  data= df_north,   
+  aes(x = Season_week,  #Week_num_season
+      y = Season,       #Year_Country
+      fill = hospitalisation_rate_log)) +  #hospitalisation_rate_scaled
+  geom_raster()          +
+  scale_x_continuous(breaks=tick_week_break,
+                     labels= label_for_sequence_season_week)+
+  
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#004550"),
+                       na.value = "white")  +         
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere) 
+  )+
+  labs(title="Log RSV Hospitalisation Rate", 
+       x="", #Calendar week number label in deck
+       y="Season",
+       fill="Log Rate",
+  )+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.12,0.42),  #
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=19, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")) 
+
+print(heatmap_bycountryyear_rsv_north)
+
+ggsave("Output/graphs/01_01_global overview/02_globaloverview_heatmap_rsv_north.png",
+       plot = heatmap_bycountryyear_rsv_north,
+       width = 10, height = 8, dpi = 300)
+
+
