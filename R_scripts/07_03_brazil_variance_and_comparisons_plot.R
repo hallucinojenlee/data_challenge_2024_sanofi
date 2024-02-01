@@ -9,6 +9,7 @@ path <- 'https://github.com/hallucinojenlee/data_challenge_2024_sanofi/raw/main/
 #Flu
 
 #reading
+mast <- import_list(path) 
 flu <- mast$Flu
 flu <- flu %>% filter(Country == 'Brazil')
 flu$Week_date <- as.numeric(rsv$Week_date)
@@ -68,6 +69,7 @@ ggplot() +
 #RSV
 
 #reading
+mast <- import_list(path) 
 rsv <- mast$RSV
 rsv <- rsv %>% filter(Country == 'Brazil')
 rsv$Week_date <- as.numeric(rsv$Week_date)
