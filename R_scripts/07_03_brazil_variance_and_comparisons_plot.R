@@ -57,12 +57,11 @@ ggplot() +
                                                                                                               "#18cdf1", "#088199")) +
   
   scale_y_continuous(name="No of Hospitalisation",expand=c(0,0),
-                     limits=c(0,1200)) +
+                     limits=c(0,1100)) +
   theme(panel.border = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
-        legend.position=c(0.1,0.9),
         text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5)) 
 
@@ -121,7 +120,6 @@ ggplot() +
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
-        legend.position=c(0.9,0.9),
         text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5)) 
 
@@ -216,7 +214,6 @@ a <- ggplot() +
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
-        legend.position=c(0.1,0.9),
         text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5)) 
 
@@ -237,11 +234,12 @@ b <- ggplot() +
                                                                                                             "#18cdf1", "#088199")) +
   
   scale_y_continuous(name="No of Hospitalisation",expand=c(0,0),
-                     limits=c(0,100)) +
+                     limits=c(0,230)) +
   theme(panel.border = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.background = element_rect(fill = "transparent"),
-        legend.position=c(0.1,0.9),
         text=element_text(size=14,family="Arial"),
         plot.title=element_text(hjust=0.5)) 
+b
+a
