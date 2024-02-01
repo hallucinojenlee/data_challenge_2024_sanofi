@@ -12,10 +12,10 @@ path <- 'https://github.com/hallucinojenlee/data_challenge_2024_sanofi/raw/main/
 mast <- import_list(path) 
 flu <- mast$Flu
 flu <- flu %>% filter(Country == 'Brazil')
-flu$Week_date <- as.numeric(rsv$Week_date)
-flu$Week_date <- as.Date(rsv$Week_date, origin = "1899-12-30")
-flu$Week_num <- isoweek(rsv$Week_date)
-flu$Year <- isoyear(rsv$Week_date)
+flu$Week_date <- as.numeric(flu$Week_date)
+flu$Week_date <- as.Date(flu$Week_date, origin = "1899-12-30")
+flu$Week_num <- isoweek(flu$Week_date)
+flu$Year <- isoyear(flu$Week_date)
 brazil_clean <- flu
 brazil_clean[brazil_clean$Month == 12 & brazil_clean$Week_num == 1,"Month"] <- 1
 brazil_clean <- brazil_clean %>% group_by(Year, Month, Week_num, Week_date, hospitalisation_rate) %>% 
