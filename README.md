@@ -30,6 +30,22 @@ All of the R script that use for produce the output in the report and presentati
 - Brazil = `07`
 
 ## Data and Scrapping
+### Data Dictionary
+The main data
+
+`Country`              = name of the country <br>
+`Disease`              = Influenza or RSV <br>
+`Year`                 = Year <br>
+`Month`                = Month <br>
+`Week_num`             = Week Num  <br>
+`Week_type`            = Week type <br>
+`Week_date`            = Date of the week <br>
+`hospitalisation_num`  = Number of hospitalisation admission <br>
+`hospitalisation_rate` = hospitalisation rate per 100k population <br>
+`Flu_A`                = Flu A <br>
+`Flu_B`                = Flu B <br>
+`Population`           = Number of population <br>
+
 ### Data Source
 
 | Country | Source                                                                                                                    | Metric              | Data Extraction        | Timeframe |
