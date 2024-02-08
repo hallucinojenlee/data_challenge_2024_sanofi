@@ -7,20 +7,20 @@
 This is the LSHTM MSc Health Data Science 20224 - Sanofi for Data Challenge project
 
 ## Description
-This project want to capture the pre and post COVID-19 RSV and sesonal Flu pattern for Northern and Southern Hemisphere countries 
+This project want to capture the pre- and post-COVID-19 sesonal Inflluenza and RSV pattern for Northern and Southern Hemisphere countries 
 
 ## Project items
 ### Dataset
-All of the datasets that using in this project. The main data of this project consist of:
+The main data of this project consist of:
 - `Consolidated_dataset_MASTER.xlsx` = dataset consolidation for Flu and RSV timeseries data 2017-2023 from France, Brazil, England, Australia, US, and Turkey
 
-### Output
+### Outputs
 All of the output for the report and presentation including 
-- graphs in `graphs`
-- tables in `tables` 
+- Graphs in `graphs`
+- Tables in `tables` 
 
-### R Script
-All of the R script that use for produce the output in the report and presentation. First 5 characters of files name are codes for regions/countries 
+### R Scripts
+All of the R scripts used to produce the output in the report and presentation. First 5 characters of files name are codes for regions/countries 
 - The global data =  `01`
 - England = `02`
 - France = `03`
@@ -29,7 +29,7 @@ All of the R script that use for produce the output in the report and presentati
 - Australia = `06`
 - Brazil = `07`
 
-## Data and Scrapping
+## Data and Scraping
 ### Data Dictionary
 The main data
 
@@ -60,7 +60,7 @@ The main data
 | Australia  | [Australian Influenza Surveillance Reports ](https://www.health.gov.au/resources/collections/australian-influenza-surveillance-reports-2023)    | Hospital admissions    | Download .csv   | 2017-2023 | 
 | Brazil  | [OpenDataSUS](https://opendatasus.saude.gov.br)                                                                           | Hospital admissions | Download .csv          | 2019-2023 | 
 
-### Scrapping .pdf Method
+### Scraping PDF
 - [Digitizer](https://apps.automeris.io/wpd/)
 
 
