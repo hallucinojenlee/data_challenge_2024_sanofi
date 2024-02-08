@@ -9,7 +9,7 @@ This is the LSHTM MSc Health Data Science-Sanofi for Data Challenge project
 ## Description
 This project want to capture the pre and post COVID-19 RSV and sesonal Flu pattern for Northern and Southern Hemisphere countries 
 
-## Project items:
+## Project items
 ### Dataset
 All of the datasets that using in this project. The main data of this project consist of:
 - `Consolidated_dataset_MASTER.xlsx` = dataset consolidation for Flu and RSV timeseries data 2017-2023 from France, Brazil, England, Australia, US, and Turkey
