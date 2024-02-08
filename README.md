@@ -33,18 +33,20 @@ All of the R script that use for produce the output in the report and presentati
 ### Data Dictionary
 The main data
 
-`Country`              = name of the country <br>
-`Disease`              = Influenza or RSV <br>
-`Year`                 = Year <br>
-`Month`                = Month <br>
-`Week_num`             = Week Num  <br>
-`Week_type`            = Week type <br>
-`Week_date`            = Date of the week <br>
-`hospitalisation_num`  = Number of hospitalisation admission <br>
-`hospitalisation_rate` = hospitalisation rate per 100k population <br>
-`Flu_A`                = Flu A <br>
-`Flu_B`                = Flu B <br>
-`Population`           = Number of population <br>
+| Variable       | Description |
+| :--------------| :---------- |
+|`Country`       |Name of the country |
+|`Disease`        |Influenza or RSV |
+|`Year`           |Year |
+|`Month`          |Month |
+|`Week_num`       |Week Num  |
+|`Week_type`      |Week type |
+|`Week_date`      |Date of the week |
+|`hospitalisation_num` |Number of hospitalisation admission |
+|`hospitalisation_rate`|Hospitalisation rate per 100k population |
+|`Flu_A`  |Flu A hospitalisation admission |
+|`Flu_B`  | Flu B |
+|`Population` |Number of population per year |
 
 ### Data Source
 
