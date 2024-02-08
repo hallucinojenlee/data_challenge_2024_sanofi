@@ -31,15 +31,18 @@ All of the R script that use for produce the output in the report and presentati
 
 ## Data and Scrapping
 ### Data Source
-- FluNet and FluID from [WHO](https://www.who.int/teams/global-influenza-programme/surveillance-and-monitoring/influenza-surveillance-outputs)
-- England = [National Flu and COVID-19 surveillance reports](https://www.gov.uk/government/collections/weekly-national-flu-reports)
-- France = [Bulletin épidémiologique grippe and Bulletin IRA](https://www.santepubliquefrance.fr)
-- Turkey = [Haftalık İnfluenza Raporları ](https://grip.saglik.gov.tr/tr/haftalik-influenza-raporu)
-- USA = [CDC RESP-NET](https://www.cdc.gov/surveillance/resp-net/dashboard.html)
-- Australia = [Australian Influenza Surveillance Reports ](https://www.health.gov.au/resources/collections/australian-influenza-surveillance-reports-2023)
-- Brazil = [OpenDataSUS](https://opendatasus.saude.gov.br)
 
-### Scrapping Method
+| Country | Source                                                                                                                    | Metric              | Data Extraction        | Timeframe |
+| :------ | :------------------------------------------------------------------------------------------------------------------------ | :------------------ | :--------------------- | :-------- |
+| GLobal  | [GISRS](https://www.who.int/teams/global-influenza-programme/surveillance-and-monitoring/influenza-surveillance-outputs)  | Hospital admissions | Download .csv          | 2019-2023 |
+| England | [National Flu and COVID-19 surveillance reports](https://www.gov.uk/government/collections/weekly-national-flu-reports)   | Rates per 100k      | Download .csv and .pdf | 2017-2023 | 
+| France  | [Bulletin épidémiologique grippe and Bulletin IRA](https://www.santepubliquefrance.fr)                                    | ICU admissions      | Download .csv and .pdf | 2018-2023 | 
+| Turkey  | [Haftalık İnfluenza Raporları ](https://grip.saglik.gov.tr/tr/haftalik-influenza-raporu)                                  | Hospital admissions | Download .csv and .pdf | 2018-2023 | 
+| USA     | [CDC RESP-NET](https://www.cdc.gov/surveillance/resp-net/dashboard.html)                                                  | Rates per 100k      | Download .csv          | 2017-2023 | 
+| Australia  | [Australian Influenza Surveillance Reports ](https://www.health.gov.au/resources/collections/australian-influenza-surveillance-reports-2023)    | Hospital admissions    | Download .csv   | 2017-2023 | 
+| Brazil  | [OpenDataSUS](https://opendatasus.saude.gov.br)                                                                           | Hospital admissions | Download .csv          | 2019-2023 | 
+
+### Scrapping .pdf Method
 - [Digitizer](https://apps.automeris.io/wpd/)
 
 
