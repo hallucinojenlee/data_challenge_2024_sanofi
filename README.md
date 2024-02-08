@@ -4,7 +4,7 @@
 
 # Sanofi Data Challenge
 
-This is the LSHTM MSc Health Data Science-Sanofi for Data Challenge project
+This is the LSHTM MSc Health Data Science 20224 - Sanofi for Data Challenge project
 
 ## Description
 This project want to capture the pre and post COVID-19 RSV and sesonal Flu pattern for Northern and Southern Hemisphere countries 
