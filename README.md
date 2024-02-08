@@ -29,6 +29,18 @@ All of the R script that use for produce the output in the report and presentati
 - Australia = `06`
 - Brazil = `07`
 
+## Data and Scrapping
+### Data Source
+- FluNet and FluID from [WHO](https://www.who.int/teams/global-influenza-programme/surveillance-and-monitoring/influenza-surveillance-outputs)
+- England = [National Flu and COVID-19 surveillance reports](https://www.gov.uk/government/collections/weekly-national-flu-reports)
+- France = [Bulletin épidémiologique grippe and Bulletin IRA](https://www.santepubliquefrance.fr)
+- Turkey = [Haftalık İnfluenza Raporları ](https://grip.saglik.gov.tr/tr/haftalik-influenza-raporu)
+- USA = [CDC RESP-NET](https://www.cdc.gov/surveillance/resp-net/dashboard.html)
+- Australia = [Australian Influenza Surveillance Reports ](https://www.health.gov.au/resources/collections/australian-influenza-surveillance-reports-2023)
+- Brazil = [OpenDataSUS](https://opendatasus.saude.gov.br)
+
+### Scrapping Method
+- [Digitizer](https://apps.automeris.io/wpd/)
 
 
 
