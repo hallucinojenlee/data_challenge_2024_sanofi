@@ -125,14 +125,13 @@ us.rsv %>%
 ## Create RSV data to use in plot
 rsv_ts <-
   #filter to relevant categories and rsv hospitalisations
-  resp_net %>%
-  filter(Surveillance.Network == 'RSV-NET') %>%
-  filter(Sex == 'Overall') %>%
-  filter(Race.Ethnicity == 'Overall') %>%
-  filter(Site == 'Overall') %>%
-  filter(Age.group == 'Overall') %>%
+  us.rsv %>%
+  #filter to USA
+  filter(Country == 'US') %>%
+  #transform hospitalisations metric to numeric variable
+  mutate(hosp.rate = as.numeric(hospitalisation_rate)) %>%
   #transform calendar week as date
-  mutate(Year_week=paste(MMWR.Year,MMWR.Week,"1",sep='_'),
+  mutate(Year_week=paste(Year,Week_num,"1",sep='_'),
          Date=as.Date(Year_week,'%Y_%W_%u'))
 
 ## Create Flu data to use in plot
@@ -146,26 +145,12 @@ flu_ts <-
   mutate(Year_week=paste(Year,Week_num,"1",sep='_'),
          Date=as.Date(Year_week,'%Y_%W_%u'))
 
-## Create COVID-19 data to use in plot
-covid_ts <-
-  #filter to relevant categories and COVID-19 hospitalisations
-  resp_net %>%
-  filter(Surveillance.Network == 'COVID-NET') %>%
-  filter(Sex == 'Overall') %>%
-  filter(Race.Ethnicity == 'Overall') %>%
-  filter(Site == 'Overall') %>%
-  filter(Age.group == 'Overall') %>%
-  #transform calendar week as date
-  mutate(Year_week=paste(MMWR.Year,MMWR.Week,"1",sep='_'),
-         Date=as.Date(Year_week,'%Y_%W_%u'))
-
 #Create time series plot using the r datasets (rsv,flu and COVID) created above
 combplot<-
   #create plot and set color and line size for all three viruses
   ggplot() +
   geom_line(data=flu_ts,aes(x=Date,y=hosp.rate),color="#088199",size=0.7) +
-  geom_line(data=rsv_ts,aes(x=Date,y=Weekly.Rate),color="#f77935",size=0.7) +
-  geom_line(data=covid_ts,aes(x=Date,y=Weekly.Rate),color="grey",linetype='dashed') +
+  geom_line(data=rsv_ts,aes(x=Date,y=hosp.rate),color="#f77935",size=0.7) +
   #labs(title="Influenza, RSV Hospitalisation trends in US") +
   scale_colour_brewer(palette="Dark2") +
   #set labels
@@ -179,7 +164,7 @@ combplot<-
         axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
         plot.title=element_text(hjust=0.5))
 #view plot
-combplot
+plot(combplot)
 #save plot to local working directory
 ggsave("flursvplot in us.png",plot=combplot,width=11,height=5)
 
