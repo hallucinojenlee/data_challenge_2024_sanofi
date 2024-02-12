@@ -48,7 +48,7 @@ The main data
 |`hospitalisation_num` |Number of hospitalisation admission |
 |`hospitalisation_rate`|Hospitalisation rate per 100k population |
 |`Flu_A`  |Flu A hospitalisation admission |
-|`Flu_B`  | Flu B |
+|`Flu_B`  | Flu B hospitalisation admission |
 |`Population` |Number of population per year |
 
 ### Data Source
