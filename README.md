@@ -1,5 +1,6 @@
-
-<img src="Output/banner.gif" width="450" height="320"/>
+<p align=center>
+<img src="Output/banner.gif" width="500" height="320"/>
+</p>
 
 ![R](https://img.shields.io/badge/r-%23276DC3.svg?style=for-the-badge&logo=r&logoColor=white)
 ![GitHub Releases](https://img.shields.io/badge/available-syntax-blue)
