@@ -1,5 +1,5 @@
 #### This is a synthesizing analysis using spiderplot ####
-#Date: 12 - FEB - 2024
+#Date: 17 - FEB - 2024
 #Author: Kai
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -15,17 +15,16 @@ library(tidyr)
 ## load  cleaned flu rsv df ####
 #+++++++++++++++++++++++++++++++
 df_flu<-read.csv(paste0(path,"/Dataset/dataframe_master_cleaned_flu.csv"))
-df_rsv<-read.csv(paste0(path,"/Dataset/dataframe_master_cleaned_rsv.csv"))
-
-
 df_flu$Disease<-"Influenza"
+
+df_rsv<-read.csv(paste0(path,"/Dataset/dataframe_master_cleaned_rsv.csv"))
 
 #+++++++++++++++++++++++++++
 ## redefine season/year ####
 #+++++++++++++++++++++++++++
 
 ## season cut point
-season_week_cut <- 18 #iso week 29 become season week 1
+season_week_cut <- 18 #iso week 19 become season week 1
 
 df_flu$Season_week<- ifelse( df_flu$Week_num > season_week_cut, 
                              df_flu$Week_num - season_week_cut,
@@ -89,9 +88,6 @@ df_peak<-rbind(temp_flu_seasonpeak,temp_flu_yearpeak,
                temp_rsv_seasonpeak,temp_rsv_yearpeak)
 rm(temp_flu_seasonpeak,temp_flu_yearpeak,temp_rsv_seasonpeak,temp_rsv_yearpeak)
 
-table(df_peak$Week_num)
-hist(df_peak$Week_num)
-
 
 ###!!REFINE wierd points!! ####
 #(1)france's 2023 data is not updated to end of year, so omit
@@ -116,23 +112,24 @@ df_peak$Season_level <-  match(df_peak$Season,
                                unique(df_peak$Season))#careful, it is correct because the original one is ordered already
 
 #!!relevel into 6 levels, due to omitting 2020/21 data(season_level=4) #### 
-df_peak$Season_level <- ifelse(df_peak$Season_level > 4,
-                         df_peak$Season_level-1, df_peak$Season_level)
+# df_peak$Season_level <- ifelse(df_peak$Season_level > 4,
+#                          df_peak$Season_level-1, df_peak$Season_level)
 
-# transpose from long to wide
+#! group by country and transpose from long to wide
 df_wide_flu <- as.data.frame(
                pivot_wider(df_peak[df_peak$Disease=="Influenza",], 
-                         id_cols=Season, 
+                         id_cols=Country, 
                          values_from=Season_level, #Year
                          names_from=Week_num,
                          names_prefix="",
-                         values_fn =unique))#due to duplicate peak weeks
-rownames(df_wide_flu) <- df_wide_flu$Season
+                         values_fn =list #not "unique"
+                          #six cells have listed levels
+                         ))
 
-df_wide_flu <- df_wide_flu |> select( -Season )
+df_wide_flu <- df_wide_flu |> select( -Country )
 
 ### insert missing peaks as NA ####
-missing_peakweeks <- setdiff(1:52, #complete range of weeks in a year
+missing_peakweeks <- setdiff(1:52, #complete range of weeks in a year; 53 is neglected
                              colnames(df_wide_flu))#what I had
 
 temp_missing_peakweeks <- matrix(nrow= nrow(df_wide_flu),
@@ -146,17 +143,30 @@ setdiff(1:52,colnames(df_wide_flu))#check
 #reorder columns (don't use order()==> wrong)
 df_wide_flu <- df_wide_flu[,as.character(52:1)] 
 
+#replace texted missing with NA
+df_wide_flu <- apply(df_wide_flu, 2, function(x) gsub("NULL", NA, x))
+df_wide_flu <- apply(df_wide_flu, 2, function(x) gsub("NA", NA, x))
+
+rownames(df_wide_flu) <- c("England","France","Türkiye","US","Australia","Brazil")
+
+#test
+# df_wide_flu <- data.frame(df_wide_flu)
+# df_wide_flu[,"X52"]<- c(7,4,NA,7,NA,5)
+# df_wide_flu[,"X52-2"]<- c(7,6,NA,7,NA,5)
+# 
+# names(df_wide_flu)[53]<-"X52"
+
 
 # set min/max row
-max_row <- setNames(rep(6, ncol(df_wide_flu)), names(df_wide_flu))
+max_row <- setNames(rep(7, ncol(df_wide_flu)), names(df_wide_flu))
 min_row <- setNames(rep(1, ncol(df_wide_flu)), names(df_wide_flu))
 
 df_wide_flu_plot <- rbind.data.frame(max_row, min_row, #not rbind
                                      df_wide_flu)
 rownames(df_wide_flu_plot)[c(1,2)] <- c("max","min")
 
-write.csv(file=paste0(path,"/Output/tables/table_peakweek_spider_flu.csv"),
-          df_wide_flu_plot)
+ write.csv(file=paste0(path,"/Output/tables/table_peakweek_spiderbycountry_flu.csv"),
+           df_wide_flu_plot)
 
 
 #+++++++++++++++++++
@@ -166,16 +176,20 @@ library(fmsb)
 
 ##omit insufficient observations in 2020/21
 #must be composed of more than 3 variables as axes and the rows
-df_wide_flu_plot <- df_wide_flu_plot[-which(rownames(df_wide_flu_plot)=="2020/21"),]
+#df_wide_flu_plot <- df_wide_flu_plot[-which(rownames(df_wide_flu_plot)=="2020/21"),]
 
 
-# colors_manual_flu <- c("purple", "#f77935","blue" ,"yellow",
-#                        "green", "#18cdf1","grey","pink")
+colors_manual_flu <- c("purple", "#f77935","pink" ,"yellow",
+                        "green", "#18cdf1")
 
-colors_manual_flu <- c(rep("#f77935",3),rep("deepskyblue2",3))
+legend_labels <- c("2017/18","2018/19","2019/20","2020/21","2021/22","2022/23","2023/24")
 
 
-legend_labels <- rownames(df_wide_flu_plot)[-c(1,2)]#no min/max
+#test
+#force list into numeric
+df_wide_flu_plot[] <- lapply(df_wide_flu_plot, as.numeric)
+
+
 
 
 
@@ -184,7 +198,7 @@ legend_labels <- rownames(df_wide_flu_plot)[-c(1,2)]#no min/max
                 caxislabels =legend_labels , 
                 axislabcol="gray",
                 calcex= 0.8,
-                na.itp = FALSE,# true =weird lines for low data points
+                na.itp = TRUE,# true =weird lines for low data points
                 maxmin = TRUE,
                 pcol=colors_manual_flu,
                 cglty = 1,       # Grid line type,
@@ -194,8 +208,9 @@ legend_labels <- rownames(df_wide_flu_plot)[-c(1,2)]#no min/max
                 cglwd = 0.1,     # Grid line width
                 cglcol = "gray", # Grid line color
                 vlcex = 0.8,     # Label size,
-)
-
+                pangle= 60       
+                )
+    
     
 legend(x="topright", 
        title="Period",
