@@ -24,130 +24,206 @@ df_rsv<-read.csv(paste0(path,"/Dataset/dataframe_master_cleaned_rsv.csv"))
 #+++++++++++++++++++++++++++
 
 ## season cut point
-season_week_cut <- 18 #iso week 19 become season week 1
+#season_week_cut <- 46 #iso week 19 become season week 1
+season_week_cut_north <- 18 
+season_week_cut_south <- 44 
 
-df_flu$Season_week<- ifelse( df_flu$Week_num > season_week_cut, 
-                             df_flu$Week_num - season_week_cut,
-                             df_flu$Week_num + 52 - season_week_cut)
-df_rsv$Season_week<- ifelse( df_rsv$Week_num > season_week_cut, 
-                             df_rsv$Week_num - season_week_cut,
-                             df_rsv$Week_num + 52 - season_week_cut)
+# FLU: north/south
+df_flu_north <- df_flu[df_flu$hemisphere=="North Hemisphere",]
+df_flu_south <- df_flu[df_flu$hemisphere=="South Hemisphere",]
 
-## season encoding
-df_flu$Season <- NA
+
+df_flu_north$Season_week<- ifelse( df_flu_north$Week_num > season_week_cut_north, 
+                                   df_flu_north$Week_num - season_week_cut_north,
+                                   df_flu_north$Week_num + 52 - season_week_cut_north)
+
+df_flu_south$Season_week<- ifelse( df_flu_south$Week_num > season_week_cut_south, 
+                                   df_flu_south$Week_num - season_week_cut_south,
+                                   df_flu_south$Week_num + 52 - season_week_cut_south)
+
+#RSV: north/south
+df_rsv_north <- df_rsv[df_rsv$hemisphere=="North Hemisphere",]
+df_rsv_south <- df_rsv[df_rsv$hemisphere=="South Hemisphere",]
+
+df_rsv_north$Season_week<- ifelse( df_rsv_north$Week_num > season_week_cut_north, 
+                                   df_rsv_north$Week_num - season_week_cut_north,
+                                   df_rsv_north$Week_num + 52 - season_week_cut_north)
+df_rsv_south$Season_week<- ifelse( df_rsv_south$Week_num > season_week_cut_south, 
+                                   df_rsv_south$Week_num - season_week_cut_south,
+                                   df_rsv_south$Week_num + 52 - season_week_cut_south)
+
+
+
+## season encoding ####
+#(1) flu north
+df_flu_north$Season <- NA
 for (year in 2017:2024) {
-  condition_1 <- (df_flu$Year == year & df_flu$Week_num <= season_week_cut)
+  condition_1 <- (df_flu_north$Year == year & df_flu_north$Week_num <= season_week_cut_north)
   condition_2 <- (
-    (df_flu$Year == year & df_flu$Week_num > season_week_cut) |
-      ((df_flu$Year == year + 1) & df_flu$Week_num <= season_week_cut) )
-  df_flu$Season <- ifelse(condition_1, paste0(year - 1, "/", substr(as.character(year), 3, 4)), df_flu$Season)
-  df_flu$Season <- ifelse(condition_2, paste0(year, "/", substr(as.character(year + 1), 3, 4)), df_flu$Season)
+    (df_flu_north$Year == year & df_flu_north$Week_num > season_week_cut_north) |
+      ((df_flu_north$Year == year + 1) & df_flu_north$Week_num <= season_week_cut_north) )
+  df_flu_north$Season <- ifelse(condition_1, paste0(year - 1, "/", substr(as.character(year), 3, 4)), df_flu_north$Season)
+  df_flu_north$Season <- ifelse(condition_2, paste0(year, "/", substr(as.character(year + 1), 3, 4)), df_flu_north$Season)
 }
 
-df_rsv$Season <- NA
+#(2) flu south
+df_flu_south$Season <- NA
 for (year in 2017:2024) {
-  condition_1 <- (df_rsv$Year == year & df_rsv$Week_num <= season_week_cut)
+  condition_1 <- (df_flu_south$Year == year & df_flu_south$Week_num <= season_week_cut_south)
   condition_2 <- (
-    (df_rsv$Year == year & df_rsv$Week_num > season_week_cut) |
-      ((df_rsv$Year == year + 1) & df_rsv$Week_num <= season_week_cut) )
-  df_rsv$Season <- ifelse(condition_1, paste0(year - 1, "/", substr(as.character(year), 3, 4)), df_rsv$Season)
-  df_rsv$Season <- ifelse(condition_2, paste0(year, "/", substr(as.character(year + 1), 3, 4)), df_rsv$Season)
+    (df_flu_south$Year == year & df_flu_south$Week_num > season_week_cut_south) |
+      ((df_flu_south$Year == year + 1) & df_flu_south$Week_num <= season_week_cut_south) )
+  df_flu_south$Season <- ifelse(condition_1, paste0(year - 1, "/", substr(as.character(year), 3, 4)), df_flu_south$Season)
+  df_flu_south$Season <- ifelse(condition_2, paste0(year, "/", substr(as.character(year + 1), 3, 4)), df_flu_south$Season)
+}#should south backward a year?
+
+#(3) rsv north
+df_rsv_north$Season <- NA
+for (year in 2017:2024) {
+  condition_1 <- (df_rsv_north$Year == year & df_rsv_north$Week_num <= season_week_cut_north)
+  condition_2 <- (
+    (df_rsv_north$Year == year & df_rsv_north$Week_num > season_week_cut_north) |
+      ((df_rsv_north$Year == year + 1) & df_rsv_north$Week_num <= season_week_cut_north) )
+  df_rsv_north$Season <- ifelse(condition_1, paste0(year - 1, "/", substr(as.character(year), 3, 4)), df_rsv_north$Season)
+  df_rsv_north$Season <- ifelse(condition_2, paste0(year, "/", substr(as.character(year + 1), 3, 4)), df_rsv_north$Season)
 }
+
+#(4) rsv south
+df_rsv_south$Season <- NA
+for (year in 2017:2024) {
+  condition_1 <- (df_rsv_south$Year == year & df_rsv_south$Week_num <= season_week_cut_south)
+  condition_2 <- (
+    (df_rsv_south$Year == year & df_rsv_south$Week_num > season_week_cut_south) |
+      ((df_rsv_south$Year == year + 1) & df_rsv_south$Week_num <= season_week_cut_south) )
+  df_rsv_south$Season <- ifelse(condition_1, paste0(year - 1, "/", substr(as.character(year), 3, 4)), df_rsv_south$Season)
+  df_rsv_south$Season <- ifelse(condition_2, paste0(year, "/", substr(as.character(year + 1), 3, 4)), df_rsv_south$Season)
+}
+
+#combind back
+df_flu<- rbind(df_flu_north,df_flu_south)
+df_rsv<- rbind(df_rsv_north,df_rsv_south)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # identify peak week, specific to hemisphere & season/year
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#North => season
-#South => year
-
-temp_flu_seasonpeak <- df_flu |> 
-  group_by(Country,Season) |> 
+#North => season (week 19-18)
+#South => season (week 45-44)
+temp_flu_seasonpeak <- df_flu |>
+  group_by(Country,Season) |>
   select(Disease,Country,Year,Season,Week_num,hospitalisation_rate,Season_week,hemisphere,Month)|>
-  filter(hemisphere=="North Hemisphere")|>
   slice(which.max(hospitalisation_rate))
 
-temp_flu_yearpeak <- df_flu |> 
-  group_by(Country,Year) |> 
-  select(Disease,Country,Year,Season,Week_num,hospitalisation_rate,Season_week,hemisphere,Month)|>
-  filter(hemisphere=="South Hemisphere")|>
-  slice(which.max(hospitalisation_rate))
-
-temp_rsv_seasonpeak<-df_rsv |> 
+temp_rsv_seasonpeak <- df_rsv |>
   group_by(Country,Season) |> # for north using season is better than groupby year
   select(Disease,Country,Year,Season,Week_num,hospitalisation_rate,Season_week,hemisphere,Month)|>
-  filter(hemisphere=="North Hemisphere")|>
   slice(which.max(hospitalisation_rate))
 
-temp_rsv_yearpeak<-df_rsv |> 
-  group_by(Country,Year) |> 
-  select(Disease,Country,Year,Season,Week_num,hospitalisation_rate,Season_week,hemisphere,Month)|>
-  filter(hemisphere=="South Hemisphere")|>
-  slice(which.max(hospitalisation_rate))
+df_peak <- rbind(temp_flu_seasonpeak,
+                 temp_rsv_seasonpeak)
 
-df_peak<-rbind(temp_flu_seasonpeak,temp_flu_yearpeak,
-               temp_rsv_seasonpeak,temp_rsv_yearpeak)
-rm(temp_flu_seasonpeak,temp_flu_yearpeak,temp_rsv_seasonpeak,temp_rsv_yearpeak)
-
-
-###!!REFINE wierd points!! ####
-#(1)france's 2023 data is not updated to end of year, so omit
-df_peak<-df_peak[!(df_peak$Season=="2023/24" &df_peak$Country=="France"),]
-
-#df_peak[df_peak$Year==2020 &df_peak$Country=="Brazil","era"]<-"Post-pandemic" # week 12 should be regarded post
-#keep it prepan
-#df_peak<-df_peak[!(df_peak$Week_num==52 &df_peak$Country=="Brazil"),]
-# 2021 week 52 and 2022 week 1 are too close
-# df_peak[df_peak$Week_num==1 &
-#           df_peak$Country=="Brazil"&
-#           df_peak$Year==2022,"Season"] <- "2022/23"
-#change it to 2022/23 to fill up the lack of 2022/23
-
-df_peak <- df_peak[df_peak$Season!="2016/17",]#England' week 5 in 2017
-
-#++++++++++++++++++++++++++++++
-## prepare spider plot flu ####
-#++++++++++++++++++++++++++++++
-# create season's level
-df_peak$Season_level <-  match(df_peak$Season, 
-                               unique(df_peak$Season))#careful, it is correct because the original one is ordered already
-# df_peak[,c("Season_level","Season")] #check
 
 #relevel
 df_peak$Country <- factor(df_peak$Country,levels = c("England","France","Türkiye","US","Australia","Brazil"))
 
 
-#+++++++++++++++++++
-## plotting  ####
-#+++++++++++++++++++
+###REFINE data points####
+#(1)france's 2023 data is not updated to end of year, so omit
+df_peak<-df_peak[!(df_peak$Season=="2023/24" &df_peak$Country=="France"),]
+
+#(2)exclude too early data (year 2016) from england
+df_peak <- df_peak[df_peak$Season!="2016/17",]#England' week 5 in 2017
+
+
+#+++++++++++++++++++++
+## plotting north ####
+#+++++++++++++++++++++
+#tick
+(tick_week_break_north <- c(1,2,seq(7,32,5),35,39,44,49,52))
+(label_north_seasonweek <- c(19,20,25,30,35,40,45,50,1,5,10,15,18))
 
 
 
-
-ggplot(data = df_peak , #[df_peak$Disease == "Influenza", ],
+plot_north <- ggplot(data = df_peak[df_peak$hemisphere == "North Hemisphere", ],
        mapping = aes(x = Season_week, 
-                     y = Season_level, 
+                     y = Season, #Season_level
                      col = Country
                      )) + 
-  facet_grid(vars(Disease))+
+  facet_grid(rows= vars(Disease)
+             #,cols = vars(hemisphere)
+             )+
+  scale_x_continuous(breaks=tick_week_break_north,
+                     labels= label_north_seasonweek,
+                     limits = c(1, 52))+
+
   geom_point(size = 2.6) +
   geom_path(    #not geom_segment
     aes( group = Country ),
-    position = position_dodge(width = 0.5),
+    position = position_dodge(width = 0.02),
     arrow = arrow(type = "open",
                   length = unit(0.15, "inches"),
                   ends = "last")#arrow direction to ends
-  )
+  )+
+  labs(title = "  Hospitalisation Peak Week",
+       x="Calendar Week",
+       y="")+
+  
+  theme_minimal()+
+  theme(legend.position="bottom")+
+  guides(col = guide_legend(title = NULL))#remove legend title
 
-  # 
+print(plot_north)
 
-lag(df_peak$Season_week)
-lag(df_peak$Season_level)
-
- write.csv(file=paste0(path,"/Output/tables/table_peakweek_spiderbycountry_flu.csv"),
-           df_wide_flu_plot)
-
-
-
-    
+#+++++++++++++++++++++
+## plotting south ####
+#+++++++++++++++++++++
+#tick
+(tick_week_break_south <- c(1,6,9,seq(13,48,5)))
+(label_south_seasonweek <- c(45,50,1,seq(5,40,5)))
 
 
+plot_south <- ggplot(data = df_peak[df_peak$hemisphere == "South Hemisphere", ],
+                     mapping = aes(x = Season_week, 
+                                   y = Season, #Season_level
+                                   col = Country
+                     )) + 
+  facet_grid(rows= vars(Disease)
+             #,cols = vars(hemisphere)
+  )+
+  scale_x_continuous(breaks=tick_week_break_south,
+                     labels= label_south_seasonweek,
+                     limits = c(1, 52))+
+  
+  geom_point(size = 2.6) +
+  geom_path(    #not geom_segment
+    aes( group = Country ),
+    position = position_dodge(width = 0.02),
+    arrow = arrow(type = "open",
+                  length = unit(0.15, "inches"),
+                  ends = "last")#arrow direction to ends
+  )+
+  labs(title = "  Hospitalisation Peak Week",
+       x="Calendar Week",
+       y="")+
+  theme_minimal()+
+  theme(legend.position="bottom")+
+  scale_color_manual(values= c("Australia" = "red",
+                               "Brazil" = "blue"))+
+  guides(col = guide_legend(title = NULL))
+
+print(plot_south)
+
+
+## arrange in one plot ####
+library(ggpubr)
+
+plot_global<- ggarrange(plot_north, plot_south, 
+          labels = c("North",
+                     "South"),
+          ncol = 2, nrow = 1)
+
+print(plot_global)
+
+
+ggsave(paste0("Output/graphs/01_02_globaloverview_newscatterplot/pathplot_global_byhemidisease.png"),
+       plot = plot_global,
+       width = 8, height = 6, dpi = 300)
