@@ -19,6 +19,7 @@ df_flu$Disease<-"Influenza"
 
 df_rsv<-read.csv(paste0(path,"/Dataset/dataframe_master_cleaned_rsv.csv"))
 
+
 #+++++++++++++++++++++++++++
 ## redefine season/year ####
 #+++++++++++++++++++++++++++
@@ -224,7 +225,7 @@ plot_global<- ggarrange(plot_north, plot_south,
 print(plot_global)
 
 
-ggsave(paste0("Output/graphs/01_02_globaloverview_newscatterplot/pathplot_global_byhemidisease.png"),
+ggsave(paste0("Output/to_think_global_health/pathplot_global_byhemidisease.png"),
        plot = plot_global,
        width = 8, height = 6, dpi = 300)
 
@@ -268,3 +269,38 @@ df_diff_mean <- df_diff |>
   summarise(Difference = round(mean(Difference),1),
             .groups = 'drop')
 
+## merge df_peak back to df_peak_mean ####
+#to provide a baseline comparison
+df_peak <- merge(df_peak,
+      df_peak_mean[df_peak_mean$PostCOVID==FALSE,],
+      all.x=TRUE,
+      by=c("Country","Disease"))
+
+df_peak<- df_peak|> 
+  rename(Precovid_mean_season_week=Mean_season_week)|>
+  mutate( Difference_compared_to_precovid  = 
+            Season_week - Precovid_mean_season_week)
+
+
+
+## export to think global health ####
+
+write.csv(df_peak,
+          "Output/to_think_global_health/table_peak.csv",
+          row.names=FALSE)
+
+write.csv(df_diff_mean_hemisphere,
+          "Output/to_think_global_health/table_peak_preandpost_mean_byhemisphere.csv",
+          row.names=FALSE)
+
+write.csv(df_diff_mean,
+          "Output/to_think_global_health/table_peak_preandpost_mean.csv",
+          row.names=FALSE)
+
+write.csv(df_flu,
+          "Output/to_think_global_health/dataframe_master_flu.csv",
+          row.names=FALSE)
+
+write.csv(df_rsv,
+          "Output/to_think_global_health/dataframe_master_rsv.csv",
+          row.names=FALSE)
