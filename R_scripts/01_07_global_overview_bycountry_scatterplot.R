@@ -227,3 +227,44 @@ print(plot_global)
 ggsave(paste0("Output/graphs/01_02_globaloverview_newscatterplot/pathplot_global_byhemidisease.png"),
        plot = plot_global,
        width = 8, height = 6, dpi = 300)
+
+
+#++++++++++++++++++++++++++++++++++++++
+# difference in pre-and-post peaks ####
+#++++++++++++++++++++++++++++++++++++++
+df_peak$flag_postcovid <- df_peak$Season %in% 
+   c("2020/21","2021/22","2022/23","2023/24")
+
+df_peak[,c("Season","flag_postcovid")]
+
+#aggregate
+df_peak_mean <- aggregate(df_peak$Season_week, 
+          list(df_peak$Disease,df_peak$flag_postcovid,df_peak$Country), 
+          FUN=mean) 
+
+colnames(df_peak_mean)<-c("Disease","PostCOVID","Country","Mean_season_week")
+
+# difference for each country-disease ####
+df_diff <- df_peak_mean |>
+  group_by(Country, Disease) |>
+  summarise(Difference = round(
+                           mean(Mean_season_week[PostCOVID == TRUE]) 
+                         - mean(Mean_season_week[PostCOVID == FALSE]),1),
+                       .groups = 'drop')
+  
+# mean difference by hemisphere-disease ####
+df_diff$hemisphere <- ifelse(df_diff$Country %in% 
+  c("Australia","Brazil"),"South Hemisphere",
+  "North Hemisphere")
+
+
+df_diff_mean_hemisphere <- df_diff |>
+  group_by( Disease, hemisphere) |>
+  summarise(Difference = round(mean(Difference),1),
+            .groups = 'drop')
+
+df_diff_mean <- df_diff |>
+  group_by( Disease) |>
+  summarise(Difference = round(mean(Difference),1),
+            .groups = 'drop')
+
