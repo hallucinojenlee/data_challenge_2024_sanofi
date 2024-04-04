@@ -233,8 +233,13 @@ ggsave(paste0("Output/to_think_global_health/pathplot_global_byhemidisease.png")
 #++++++++++++++++++++++++++++++++++++++
 # difference in pre-and-post peaks ####
 #++++++++++++++++++++++++++++++++++++++
-df_peak$flag_postcovid <- df_peak$Season %in% 
-   c("2020/21","2021/22","2022/23","2023/24")
+
+df_peak$flag_postcovid <- df_peak$Season %in% c("2020/21","2021/22","2022/23","2023/24")
+
+# Alternative, what if 2020/21 is post-pandemic? 
+# df_peak$flag_postcovid <- df_peak$Season %in% c("2021/22","2022/23","2023/24")
+# In northern hemisphere post-COVID (since 2019/20 season), the peak hospitalisation occurred averagely 1.8 weeks earlier for influenza epidemic, and 9.3 weeks earlier for RSV, compared to pre-COVID average peaks. In Southern hemisphere, post-COVID peaks were 7.7 weeks earlier for influenza, but 0 week later for RSV (Plot 1).
+
 
 df_peak[,c("Season","flag_postcovid")]
 
@@ -258,7 +263,7 @@ df_diff$hemisphere <- ifelse(df_diff$Country %in%
   c("Australia","Brazil"),"South Hemisphere",
   "North Hemisphere")
 
-
+# aprroach 1: including all countries
 df_diff_mean_hemisphere <- df_diff |>
   group_by( Disease, hemisphere) |>
   summarise(Difference = round(mean(Difference),1),
@@ -268,6 +273,15 @@ df_diff_mean <- df_diff |>
   group_by( Disease) |>
   summarise(Difference = round(mean(Difference),1),
             .groups = 'drop')
+
+# approach 2: global but excluding Brazil
+
+df_diff_mean_nobrazil <- df_diff |>
+  filter(Country!="Brazil" )|>
+  group_by( Disease) |>
+  summarise(Difference = round(mean(Difference),1),
+            .groups = 'drop')
+
 
 ## merge df_peak back to df_peak_mean ####
 #to provide a baseline comparison
@@ -280,6 +294,15 @@ df_peak<- df_peak|>
   rename(Precovid_mean_season_week=Mean_season_week)|>
   mutate( Difference_compared_to_precovid  = 
             Season_week - Precovid_mean_season_week)
+
+#see if recent years are less different? 
+
+df_diff_mean_nobrazil_byseason <- df_peak |>
+  filter(flag_postcovid==TRUE & Country!="Brazil")|>
+  group_by(Disease, Season)|>
+  summarise(Mean_Difference = round(mean(Difference_compared_to_precovid),1),
+            .groups = 'drop')
+print(df_diff_mean_nobrazil_byseason)
 
 
 
@@ -304,3 +327,11 @@ write.csv(df_flu,
 write.csv(df_rsv,
           "Output/to_think_global_health/dataframe_master_rsv.csv",
           row.names=FALSE)
+
+write.csv(df_diff_mean_nobrazil,
+          "Output/to_think_global_health/table_peak_preandpost_mean_nobrazil.csv",
+          row.names=FALSE)
+write.csv(df_diff_mean_nobrazil_byseason,
+          "Output/to_think_global_health/table_peak_preandpost_mean_nobrazil_byseason.csv",
+          row.names=FALSE)
+
