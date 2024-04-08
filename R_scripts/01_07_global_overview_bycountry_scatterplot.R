@@ -346,3 +346,174 @@ write.csv(df_diff_mean_nobrazil_byseason,
 write.csv(df_diff_mean_byseason,
           "Output/to_think_global_health/table_peak_preandpost_mean_byseason.csv",
           row.names=FALSE)
+
+#++++++++++++++
+# heat maps ####
+#++++++++++++++
+
+
+# (1) north flu ####
+(tick_week_break_north_heatmap <- c(1,seq(7,32,5),35,39,44,49,52))
+(label_north_seasonweek_heatmap <- c(19,25,30,35,40,45,50,1,5,10,15,18))# remove 20 
+
+heatmap_north_flu <- ggplot(
+  data=df_flu_north[df_flu_north$Season!="2016/17",], 
+  aes(x = Season_week,  
+      y = Season,       
+      fill = hospitalisation_rate_log)) +  
+  geom_raster()          +
+  scale_x_continuous(breaks=tick_week_break_north_heatmap, # from scatter plot
+                     labels= label_north_seasonweek_heatmap)+
+  
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#088199"),
+                       na.value = "white")  +         
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere) 
+  )+
+  labs(title="Log Influenza Hospitalisation Rate", 
+       x="Calendar week", #Calendar week number label in deck
+       y="Season",
+       fill="Log Rate",
+  )+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.13,0.55), 
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=17, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")) 
+
+print(heatmap_north_flu)
+
+# (2) north RSV ####
+heatmap_north_rsv <- ggplot(
+  data=df_rsv_north, 
+  aes(x = Season_week,  
+      y = Season,       
+      fill = hospitalisation_rate_log)) +  
+  geom_raster()          +
+  scale_x_continuous(breaks=tick_week_break_north_heatmap, # from scatter plot
+                     labels= label_north_seasonweek_heatmap)+
+  
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#f77935"),
+                       na.value = "white")  +         
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere) 
+  )+
+  labs(title="Log RSV Hospitalisation Rate", 
+       x="Calendar week", #Calendar week number label in deck
+       y="Season",
+       fill="Log Rate",
+  )+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.13,0.45), 
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=17, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")) 
+
+print(heatmap_north_rsv)
+
+# arrange 2-in-1
+
+heatmap_north_flu_rsv<- ggarrange(heatmap_north_flu, heatmap_north_rsv, 
+                        labels = c("",""),
+                        ncol = 2, nrow = 1)
+
+print(heatmap_north_flu_rsv)
+
+ggsave(paste0("Output/to_think_global_health/heatmap_north_flu_rsv.png"),
+       plot = heatmap_north_flu_rsv,
+       width = 14, height = 8, dpi = 300)
+
+
+
+
+# (3) south flu ####
+#(tick_week_break_south <- c(1,6,9,seq(13,48,5)))
+#(label_south_seasonweek <- c(45,50,1,seq(5,40,5)))
+
+df_flu_south$Country <- factor(df_flu_south$Country,level=c("Brazil","Australia"))
+
+heatmap_south_flu <- ggplot(
+  data=df_flu_south[df_flu_south$Season!="2016/17",], 
+  aes(x = Season_week,  
+      y = Season,       
+      fill = hospitalisation_rate_log)) +  
+  geom_raster()          +
+  scale_x_continuous(breaks=tick_week_break_south, 
+                     labels= label_south_seasonweek)+
+  
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#088199"),
+                       na.value = "white")  +         
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere) 
+  )+
+  labs(title="Log Influenza Hospitalisation Rate", 
+       x="Calendar week", #Calendar week number label in deck
+       y="Season",
+       fill="Log Rate",
+  )+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.13,0.35), 
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=17, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")) 
+
+print(heatmap_south_flu)
+
+# (4) south rsv ####
+
+heatmap_south_rsv <- ggplot(
+  data=df_rsv_south[df_rsv_south$Season!="2016/17",], 
+  aes(x = Season_week,  
+      y = Season,       
+      fill = hospitalisation_rate_log)) +  
+  geom_raster()          +
+  scale_x_continuous(breaks=tick_week_break_south, 
+                     labels= label_south_seasonweek)+
+  
+  scale_fill_gradientn(colours=c("#FFFFFFFF","#f77935"),
+                       na.value = "white")  +         
+  facet_grid(rows = vars(Country)
+             #,cols = vars(hemisphere) 
+  )+
+  labs(title="Log RSV Hospitalisation Rate", 
+       x="Calendar week", #Calendar week number label in deck
+       y="Season",
+       fill="Log Rate",
+  )+
+  theme_minimal()+
+  theme(strip.text = element_text(
+    size = 22, color = "black"),
+    panel.border = element_blank(),  
+    panel.grid.major = element_blank(), 
+    legend.position=c(0.13,0.25), 
+    panel.grid.minor = element_blank(),  
+    text=element_text(size=17, 
+                      family="Arial"), 
+    axis.line = element_line(colour = "black")) 
+
+print(heatmap_south_rsv)
+
+# arrange 2-in-1
+heatmap_south_flu_rsv<- ggarrange(heatmap_south_flu, heatmap_south_rsv, 
+                                  labels = c("",""),
+                                  ncol = 2, nrow = 1)
+print(heatmap_south_flu_rsv)
+
+ggsave(paste0("Output/to_think_global_health/heatmap_south_flu_rsv.png"),
+       plot = heatmap_south_flu_rsv,
+       width = 14, height = 6, dpi = 300)
