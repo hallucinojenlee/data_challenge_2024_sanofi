@@ -297,6 +297,14 @@ df_peak<- df_peak|>
 
 #see if recent years are less different? 
 
+df_diff_mean_byseason <- df_peak |>
+  filter(flag_postcovid==TRUE )|>
+  group_by(Disease, Season)|>
+  summarise(Mean_Difference = round(mean(Difference_compared_to_precovid),1),
+            .groups = 'drop')
+print(df_diff_mean_byseason)
+
+
 df_diff_mean_nobrazil_byseason <- df_peak |>
   filter(flag_postcovid==TRUE & Country!="Brazil")|>
   group_by(Disease, Season)|>
@@ -335,3 +343,6 @@ write.csv(df_diff_mean_nobrazil_byseason,
           "Output/to_think_global_health/table_peak_preandpost_mean_nobrazil_byseason.csv",
           row.names=FALSE)
 
+write.csv(df_diff_mean_byseason,
+          "Output/to_think_global_health/table_peak_preandpost_mean_byseason.csv",
+          row.names=FALSE)
